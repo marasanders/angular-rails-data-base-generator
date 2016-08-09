@@ -1,12 +1,9 @@
-//= require angular
-//= require angular-resource
-
 "use strict";
 
 (function(){
   angular
   .module("categories", ["ngResource"])
-  .controller("category_index_controller", ["$resource", "CategoryFactory", CategoryController]);
+  .controller("category_controller", ["$resource", "CategoryFactory", CategoryController]);
 
   function CategoryController($resource, CategoryFactory){
     var vm = this;

@@ -1,6 +1,6 @@
 <%= stylesheet_link_tag "categories", property: "stylesheet" %>
-<% javascript_include_tag "categories" %>
-<div class="container" data-ng-app="catagories">
+
+<div class="container" data-ng-app="luv2cook">
   <header class="jumbotron">
     <h1>Categories</h1>
   </header>
@@ -9,14 +9,14 @@
     <table class="table table-striped">
       <thead>
         <tr>
-          <th>Name Oh Hello There!{{vm}}</th>
+          <th>{{vm.category_data}}</th>
           <th colspan="3"></th>
           <tr data-ng-repeat="category in vm.category_data">
-            <td>{{$index + 1}}</td>
-            <td>
+            <td>{{$index + 1}}. <a data-ng-sref="categoryShow({id: category_id})" tabindex="1" class="large_blue">{{category.Cat_name}}</a></td>
+            <!-- <td> -->
               <!-- <img data-ng-src="{{product.image_url}}" alt="#" /> -->
-              <a data-ng-href="{{Cat_name}}" tabindex="-1">{{Cat_name}}</a>
-            </td>
+              <!-- <a data-ng-href="{{Cat_name}}" tabindex="-1">{{category.Cat_name}}</a>
+            </td> -->
         </tr>
       </thead>
     </table>

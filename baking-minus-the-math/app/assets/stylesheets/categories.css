@@ -1,3 +1,9 @@
 /*
 *= require bootstrap
 */
+
+.large_blue {
+  font-size: 20px;
+  font-weight: bold;
+  color: blue;
+}
