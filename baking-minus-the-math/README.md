@@ -49,7 +49,48 @@ psql
 \c baking-minus-the-math_development
 SELECT * FROM recipes;
 
+require_tree . remove from - app.js and app/stylesheets/application.css - good rails to not
+   have so explicitly have to put in specific files so things don't appear on every page
+   of your app
 
+adding to very top of javascripts/categories/index.controller.js auto find and include when prcompiles
+
+   //= require angular
+   //= require angular-resource
+
+ add to app/stylesheets/categories.css(No spaces but afraid will read it)
+
+ / *
+ * =      require bootstrap
+ * /
+
+ configure/initializers/assets.rb
+
+ # Precompile additional assets. when rails starts will only precompile these - we are doing categories need
+ # to specify your files
+ # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
+ # Rails.application.config.assets.precompile += %w( search.js ) the w is saying ["products.js", "products.css"]
+
+ un commented and put :  Rails.application.config.assets.precompile += %w( categories.js categories.css)
+
+go back to index.html and take out html tags all the way through body cuz repeats with application.html.erb
+
+add to top on index.html.erb - <%= stylesheet_link_tag "categories", property: "stylesheet" %>
+<% javascript_include_tag "categories" %>
+
+controllers/categories_controller.rb
+
+class CategoriesController < ApplicationController
+  before_action :set_category, only: [:show, :edit, :update]
+
+  def index
+    respond_to do |format|
+      format.html
+      format.json{ render json: Category.all }
+    end
+  end
+
+http://localhost:3000/categories.json
 
 1. add gem 'devise' to gem file
 2. bundle install

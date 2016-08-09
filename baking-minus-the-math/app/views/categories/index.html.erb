@@ -1,29 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Recipes</title>
-  <link rel="stylesheet" href="bootstrap.css" />
-  <script src="angular.js"></script>
-  <script src="data.js"></script>
-  <script src="app.js"></script>
-</head>
-<body class="container" data-ng-app="inventory">
+<%= stylesheet_link_tag "categories", property: "stylesheet" %>
+<% javascript_include_tag "categories" %>
+<div class="container" data-ng-app="catagories">
   <header class="jumbotron">
     <h1>Categories</h1>
   </header>
   <main data-ng-controller="category_controller as vm">
     <!-- <p id="notice"><%= notice %></p> -->
-    <table>
+    <table class="table table-striped">
       <thead>
         <tr>
-          <th>Name Oh Hello!</th>
+          <th>Name Oh Hello There!{{vm}}</th>
           <th colspan="3"></th>
+          <tr data-ng-repeat="category in vm.category_data">
+            <td>{{$index + 1}}</td>
+            <td>
+              <!-- <img data-ng-src="{{product.image_url}}" alt="#" /> -->
+              <a data-ng-href="{{Cat_name}}" tabindex="-1">{{Cat_name}}</a>
+            </td>
         </tr>
       </thead>
     </table>
   </main>
-</body>
-</html>
+</div>
+
 <!--
   <tbody>
       <tr data-ng-repeat="categoryvm in vm.cat_data">
