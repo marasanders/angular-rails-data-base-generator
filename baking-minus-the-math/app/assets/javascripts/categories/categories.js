@@ -6,6 +6,7 @@
   .controller("category_controller", ["$resource", "CategoryFactory", CategoryController]);
 
   function CategoryController($resource, CategoryFactory){
+    alert("in the category controller")
     var vm = this;
     var Category = $resource("/categories/:id.json", {}, {
       update: {method: "PUT"}

@@ -2,7 +2,7 @@
 
 (function(){
   angular
-  .module("categories")
+  .module("categories", ["ngResource"])
   .factory("CategoryFactory", [
     "$resource",
     CategoryFactoryFunction

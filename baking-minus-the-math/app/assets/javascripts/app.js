@@ -1,8 +1,4 @@
-//= require angular
-//= require angular-resource
-//= require angular-ui-router
-
-
+alert("loading app.js")
 "use strict";
 
 (function(){
@@ -15,13 +11,13 @@
   .config(["$stateProvider", "$locationProvider", RouterFunction]);
 
     function RouterFunction($stateProvider, $locationProvider){
-      $locationProvider.html5Mode(true);
+      // $locationProvider.html5Mode(true);
       $stateProvider
       .state("categoryIndex", {
         url: "/categories",
         templateUrl: "categories/index.html.erb",
         controller: "category_controller",
-        controllerAs: "CategoryIndexViewModel"
+        controllerAs: "vm"
       })
       .state("categoryShow", {
         url: "/categories/:id",

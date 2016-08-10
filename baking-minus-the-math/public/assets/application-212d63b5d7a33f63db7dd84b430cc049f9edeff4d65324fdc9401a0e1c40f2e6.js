@@ -43684,16 +43684,16 @@ angular.module('ngResource', ['ng']).
 (function(){
   angular
     .module("categories")
-    .controller("CatergoryShowController", [
-      "CatergoryFactory",
+    .controller("CategoryShowController", [
+      "CategoryFactory",
       "RecipeFactory",
       "$stateParams",
-      CatergoryShowControllerFunction
+      CategoryShowControllerFunction
     ]);
 
-  function CatergoryShowControllerFunction(CatergoryFactory, RecipeFactory, $stateParams){
+  function CategoryShowControllerFunction(CategoryFactory, RecipeFactory, $stateParams){
     var vm = this;
-    CatergoryFactory.get({id: $stateParams.id}).$promise.then(function(category) {
+    CategoryFactory.get({id: $stateParams.id}).$promise.then(function(category) {
       vm.category = category
     })
     this.recipes = RecipeFactory.query({category_id: $stateParams.id})
@@ -43702,7 +43702,7 @@ angular.module('ngResource', ['ng']).
     }
     this.destroy = function(category){
       console.log(category)
-      CatergoryFactory.remove(category);
+      CategoryFactory.remove(category);
       this.category.splice(category, 1)
     }
   }

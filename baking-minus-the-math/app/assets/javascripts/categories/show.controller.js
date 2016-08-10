@@ -2,18 +2,21 @@
 
 (function(){
   angular
-    .module("categories")
-    .controller("CatergoryShowController", [
-      "CatergoryFactory",
+    .module("categories", ["ngResource"])
+    .controller("CategoryShowController", [
+      "CategoryFactory",
       "RecipeFactory",
-      "recipes",
       "$stateParams",
-      CatergoryShowControllerFunction
+      "$resource",
+      CategoryShowControllerFunction
     ]);
 
-  function CatergoryShowControllerFunction(CatergoryFactory, RecipeFactory, $stateParams){
+  function CategoryShowControllerFunction(CategoryFactory, RecipeFactory, $stateParams, $resource){
+    console.log("in the category show controller")
     var vm = this;
-    CatergoryFactory.get({id: $stateParams.id}).$promise.then(function(category) {
+    console.log("vm "+vm)
+    console.log("this "+this)
+    CategoryFactory.get({id: $stateParams.id}).$promise.then(function(category) {
       vm.category = category
     })
     this.recipes = RecipeFactory.query({category_id: $stateParams.id})
@@ -22,7 +25,7 @@
     }
     this.destroy = function(category){
       console.log(category)
-      CatergoryFactory.remove(category);
+      CategoryFactory.remove(category);
       this.category.splice(category, 1)
     }
   }
