@@ -212,16 +212,17 @@
     console.log("this "+this)
     console.log("cat id"+$stateParams.category_id)
     console.log("id"+$stateParams.id)
-    CategoryFactory.get({category_id: $stateParams.id}).$promise.then(function(category) {
+    CategoryFactory.get({id: $stateParams.category_id}).$promise.then(function(category) {
       vm.category = category
       console.log("category"+category)
     })
-    RecipeFactory.get({id: $stateParams.id}).$promise.then(function(recipe) {
+    RecipeFactory.get({category_id: $stateParams.category_id, id: $stateParams.id }).$promise.then(function(recipe) {
       vm.recipe = recipe
       console.log("category"+recipe)
     })
     vm.ingredients = IngredientFactory.query({recipe_id: $stateParams.id})
     console.log("ingredients "+vm.ingredients)
+
     this.update = function(recipe){
       category.$update(recipe);
     }
