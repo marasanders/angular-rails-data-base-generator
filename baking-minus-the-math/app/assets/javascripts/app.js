@@ -16,7 +16,11 @@
     "$resource",
     RecipeFactoryFunction
   ])
-  .controller("CategoryController", ["$resource", "CategoryFactory", CategoryController])
+  .controller("CategoryController", [
+    "$resource",
+    "CategoryFactory",
+    CategoryController
+  ])
   .controller("CategoryShowController", [
     "CategoryFactory",
     "RecipeFactory",
@@ -24,7 +28,11 @@
     "$resource",
     CategoryShowControllerFunction
   ])
-  .controller("RecipeIndexController", ["$resource", "RecipeFactory", RecipeController]);
+  .controller("RecipeIndexController", [
+    "$resource",
+    "RecipeFactory",
+    RecipeController
+  ]);
 
     function RouterFunction($stateProvider, $locationProvider){
       // $locationProvider.html5Mode(true);
@@ -130,17 +138,16 @@
     console.log("vm "+vm[0])
     console.log("this "+this)
     console.log("id"+$stateParams.id)
-    CategoryFactory.get($stateParams.id).$promise.then(function(category) {
+    CategoryFactory.get({id: $stateParams.id}).$promise.then(function(category) {
       vm.category = category
       console.log("category"+category)
     })
-    vm.recipes = RecipeFactory.query()
+    vm.recipes = RecipeFactory.query({category_id: $stateParams.id})
     console.log("recipe "+vm.recipes)
     this.update = function(category){
       category.$update(category);
     }
     this.destroy = function(category){
-      console.log(category)
       CategoryFactory.remove(category);
       this.category.splice(category, 1)
     }
@@ -155,7 +162,9 @@
     var Recipe = $resource("/recipes/:id.json", {}, {
       update: {method: "PUT"}
     });
-    vm.recipe_data = Recipe.query();
+    vm.recipe_data = Recipe.query()
+    console.log("recipe-data "+vm.recipe_data)
+
 
     vm.sort_recipe_data_by = function(name){
       vm.sort_on = name;
