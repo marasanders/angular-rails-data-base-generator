@@ -231,7 +231,7 @@
     }
   }
   function IngredientFactoryFunction($resource) {
-    return $resource("/recipes/:recipe_id/ingredients/id:.json", {}, {
+    return $resource("/recipes/:recipe_id/ingredients.json", {}, {
       update: {method: "PUT"}
     });
   }
