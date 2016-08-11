@@ -7,10 +7,11 @@ class CategoriesController < ApplicationController
       format.json{ render json: Category.all }
     end
   end
-  
+
   def show
     puts "IN SHOW"
     @category = Category.find(params[:id])
+    render json: @category, status: :ok
   end
 
   def edit
@@ -30,10 +31,6 @@ class CategoriesController < ApplicationController
         format.json{ render json: @category}
       end
   end
-
-
-
-
 
   def destroy
     Category.destroy(params[:id])

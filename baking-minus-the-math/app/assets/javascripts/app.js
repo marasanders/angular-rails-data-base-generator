@@ -16,6 +16,10 @@
     "$resource",
     RecipeFactoryFunction
   ])
+  .factory("IngredientFactory", [
+    "$resource",
+    IngredientFactoryFunction
+  ])
   .controller("CategoryController", [
     "$resource",
     "CategoryFactory",
@@ -32,6 +36,14 @@
     "$resource",
     "RecipeFactory",
     RecipeController
+  ])
+  .controller("RecipeShowController", [
+    "CategoryFactory",
+    "RecipeFactory",
+    "IngredientFactory",
+    "$stateParams",
+    "$resource",
+    RecipeShowControllerFunction
   ]);
 
     function RouterFunction($stateProvider, $locationProvider){
@@ -73,12 +85,12 @@
       //   controller: "RecipeEditController",
       //   controllerAs: "RecipeEditViewModel"
       // })
-      // .state("recipeShow", {
-      //   url: "/recipes/:id",
-      //   templateUrl: "recipes/show.html.erb",
-      //   controller: "RecipeShowController",
-      //   controllerAs: "RecipeShowViewModel"
-      // })
+      .state("recipeShow", {
+        url: "/recipes/:id",
+        templateUrl: "/views/recipes/show.html",
+        controller: "RecipeShowController",
+        controllerAs: "vm"
+      })
       // .state("ingredientIndex", {
       //   url: "/ingredients",
       //   templateUrl: "ingredients/index.html.erb",
@@ -153,7 +165,7 @@
     }
   }
   function RecipeFactoryFunction($resource) {
-    return $resource("/categories/158/recipes/:id.json", {}, {
+    return $resource("/categories/:category_id/recipes/:id.json", {}, {
       update: {method: "PUT"}
     });
   }
@@ -192,6 +204,36 @@
         console.log("Recipe updated!");
       });
     }
+  }
+  function RecipeShowControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, $stateParams, $resource){
+    console.log("in the recipe show controller")
+    var vm = this;
+    console.log("vm "+vm[0])
+    console.log("this "+this)
+    console.log("cat id"+$stateParams.category_id)
+    console.log("id"+$stateParams.id)
+    CategoryFactory.get({category_id: $stateParams.id}).$promise.then(function(category) {
+      vm.category = category
+      console.log("category"+category)
+    })
+    RecipeFactory.get({id: $stateParams.id}).$promise.then(function(recipe) {
+      vm.recipe = recipe
+      console.log("category"+recipe)
+    })
+    vm.ingredients = IngredientFactory.query({recipe_id: $stateParams.id})
+    console.log("ingredients "+vm.ingredients)
+    this.update = function(recipe){
+      category.$update(recipe);
+    }
+    this.destroy = function(recipe){
+      CategoryFactory.remove(recipe);
+      this.category.splice(recipe, 1)
+    }
+  }
+  function IngredientFactoryFunction($resource) {
+    return $resource("/recipes/:recipe_id/ingredients/id:.json", {}, {
+      update: {method: "PUT"}
+    });
   }
 
 
