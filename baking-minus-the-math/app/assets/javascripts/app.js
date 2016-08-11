@@ -86,7 +86,7 @@
       //   controllerAs: "RecipeEditViewModel"
       // })
       .state("recipeShow", {
-        url: "/recipes/:id",
+        url: "/category/:category_id/recipes/:id",
         templateUrl: "/views/recipes/show.html",
         controller: "RecipeShowController",
         controllerAs: "vm"

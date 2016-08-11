@@ -48,6 +48,10 @@ class IngredientsController < ApplicationController
       @recipe = Recipe.find(params[:recipe_id])
     end
 
+    def set_Category
+      @category = Category.find(params[:category_id])
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def ingredient_params
       params.require(:ingredient).permit(:message)
