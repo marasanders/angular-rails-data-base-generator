@@ -1,4 +1,7 @@
 # README
+
+when change initializers need to restart server??
+
 rake assets:precompile
 rails new baking-minus-the-math -d postgresql
 
@@ -54,6 +57,9 @@ require_tree . remove from - app.js and app/stylesheets/application.css - good r
    have so explicitly have to put in specific files so things don't appear on every page
    of your app
 
+//= are directives any file in javasripts folder will get included whenrails preocompile
+    we don't want it to be include in everypage so delete require tree
+
 adding to very top of javascripts/categories/index.controller.js auto find and include when prcompiles
 
    //= require angular
@@ -73,6 +79,9 @@ adding to very top of javascripts/categories/index.controller.js auto find and i
  # Rails.application.config.assets.precompile += %w( search.js ) the w is saying ["products.js", "products.css"]
 
  un commented and put :  Rails.application.config.assets.precompile += %w( categories.js categories.css)
+
+
+rake assets:precompile creates public/assets
 
 go back to index.html and take out html tags all the way through body cuz repeats with application.html.erb
 

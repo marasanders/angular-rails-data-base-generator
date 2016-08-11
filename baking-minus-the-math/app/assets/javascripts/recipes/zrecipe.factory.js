@@ -9,7 +9,7 @@
   ]);
 
   function RecipeFactoryFunction($resource) {
-    return $resource("http://localhost:3000/categories/:category_id/recipes/:id.json", {}, {
+    return $resource("/categories/:id.json", {}, {
       update: {method: "PUT"}
     });
   }

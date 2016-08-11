@@ -3,15 +3,15 @@
 (function(){
   angular
   .module("categories", ["ngResource"])
-  .controller("category_controller", ["$resource", "CategoryFactory", CategoryController]);
+  .controller("CategoryController", ["$resource", "CategoryFactory", CategoryController]);
 
   function CategoryController($resource, CategoryFactory){
-    alert("in the category controller")
     var vm = this;
     var Category = $resource("/categories/:id.json", {}, {
       update: {method: "PUT"}
     });
-    vm.category_data = Category.query();
+     console.log(CategoryFactory)
+    vm.category_data = CategoryFactory.query();
 
     vm.sort_category_data_by = function(name){
       vm.sort_on = name;
