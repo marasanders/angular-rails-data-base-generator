@@ -139,6 +139,23 @@
         if(response.success) vm.category_data.splice(category_index, 1);
       });
     }
+//       var vm = this;
+//       vm.new_catgory = new CategoryFactory();
+//       vm.create = function(){
+//         console.log("category"+vm.new_category.Cat_name)
+//       vm.new_catgory.$save(function(response){
+//        console.log("response "+response)
+//        if(response.success) vm.catgory_data.push(response);
+//        vm.new_catgory = new CategoryFactory();
+//   })
+// }
+
+    vm.new_category = {};
+      vm.create = function(){
+        console.log("category"+vm.new_category.Cat_name)
+        vm.category_data.push(angular.copy(vm.new_category));
+        vm.new_category = {};
+      }
 
 
     vm.update = function(category){

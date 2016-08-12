@@ -1,7 +1,10 @@
 <div class="container-fluid">
   <main>
-    <div>{{vm}}</div>
-<h1><strong>{{vm.recipe.title}}</strong></h1>
+    <div>{{vm.recipe.photo_url}}</div>
+    <!-- <div><img ng-src="{{vm.recipe.photo_url}}" style="width:304px;height:228px;"/></div> -->
+    <header class = "jumbotron">
+      <h1><strong>{{vm.recipe.title}}</strong></h1>
+    </header>
 <span class="col-md-4">Servings :{{vm.recipe.servings}}</span>
 <span class="col-md-4">Calories :{{vm.recipe.calories}}</span>
 <span class="col-md-4">Ratings :{{vm.recipe.ratings}}</span>

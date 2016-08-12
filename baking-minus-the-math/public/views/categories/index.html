@@ -2,7 +2,7 @@
 
 <div class="container">
   <header class="jumbotron">
-    <h1>Categories!</h1>
+    <h1>Categories</h1>
   </header>
     <table class="table table-striped">
       <thead>
@@ -13,8 +13,15 @@
             <td>{{$index + 1}}. <a data-ui-sref="categoryShow({id: category.id})" tabindex="1" class="large_blue">{{category.Cat_name}}</a><button class="btn btn-danger pull-right" data-ng-click="vm.destroy($index)">Delete</button></td>
             <!-- <td><button data-ui-sref="postEdit({id: postvm.id})">Edit</button> -->
             <!-- <td><button data-ng-click="vm.destroy(category)">Delete</button></td> -->
-        </tr>
+         </tr>
+          <tr>
+            <td>
+              <input type="text" data-ng-model="vm.new_category.Cat_name" placeholder="Enter New Category" /><div> </sp><button class="btn btn-success" data-ng-click="vm.create()">Create</button>
+            </td>
+          </tr>
+
       </thead>
     </table>
+
   </main>
 </div>
