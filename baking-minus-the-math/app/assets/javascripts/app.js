@@ -71,9 +71,9 @@
       })
       .state("categoryEdit", {
         url: "/categories/:id/edit",
-        templateUrl: "categories/edit.html.erb",
+        templateUrl: "categories/edit.html",
         controller: "CategoryEditController",
-        controllerAs: "CategoryEditViewModel"
+        controllerAs: "vm"
       })
       .state("recipeIndex", {
         url: "/recipes",
@@ -139,23 +139,18 @@
         if(response.success) vm.category_data.splice(category_index, 1);
       });
     }
-//       var vm = this;
-//       vm.new_catgory = new CategoryFactory();
-//       vm.create = function(){
-//         console.log("category"+vm.new_category.Cat_name)
-//       vm.new_catgory.$save(function(response){
-//        console.log("response "+response)
-//        if(response.success) vm.catgory_data.push(response);
-//        vm.new_catgory = new CategoryFactory();
-//   })
-// }
 
-    vm.new_category = {};
-      vm.create = function(){
-        console.log("category"+vm.new_category.Cat_name)
-        vm.category_data.push(angular.copy(vm.new_category));
-        vm.new_category = {};
-      }
+      vm.new_category = new CategoryFactory();
+       vm.create = function(){
+        //  console.log("category"+vm.new_category.Cat_name)
+       vm.new_category.$save(function(response){
+        // console.log("response "+response)
+        if(response.success) vm.catgory_data.push(response);
+        vm.new_catgory = new CategoryFactory();
+      })
+         vm.category_data.push(angular.copy(vm.new_category));
+         vm.new_category = {};
+       }
 
 
     vm.update = function(category){
@@ -170,6 +165,19 @@
       update: {method: "PUT"}
     });
   }
+
+  // function CategoryEditControllerFunction(CategoryFactory, $stateParams){
+  //   vm.category = CategoryFactory.get({id: $stateParams.id},function(res){
+  //      console.log("This is this.category in Factory function:  "+JSON.stringify(res))
+  //   })
+  //   console.log("IN 4EDIT")
+  //   console.log("This is this.category:  "+vm.category)
+  //   vm.update = function(){
+  //     console.log("button click")
+  //     var categoryID = JSON.stringify(vm.category.id)
+  //           console.log(categoryID)
+  //     vm.category.$update({id: $stateParams.id});
+  // }
 
   function CategoryShowControllerFunction(CategoryFactory, RecipeFactory, $stateParams, $resource){
     console.log("in the category show controller")
