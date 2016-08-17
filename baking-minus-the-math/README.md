@@ -268,3 +268,39 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+*****************************************
+Adding a Recipe
+
+on recipes show page have delete, update - this would be just on the recipe name level? or could show instructions and rest and just display ingredients or not probably the latter -
+
+add - would have
+
+  t.string   "title"
+  t.decimal  "servings",     precision: 5, scale: 2
+  t.decimal  "calories",     precision: 7, scale: 2
+  t.decimal  "rating",       precision: 4, scale: 2
+  t.text     "instructions"
+  t.text     "photo_url"
+  t.index ["category_id"], name: "index_recipes_on_category_id", using: :btree
+
+  loop through to add
+
+  create_table "ingredients", force: :cascade do |t|
+    t.string   "component"
+    t.string   "amount"
+    t.string   "measurement"
+    t.string   "amount2"
+    t.string   "measurement2"
+    t.string   "amount3"
+    t.string   "measurement3"
+    t.string   "amount4"
+    t.string   "measurement4"
+    t.string   "amount5"
+    t.string   "measurement5"
+    t.integer  "recipe_id"
+    t.index ["recipe_id"], name: "index_ingredients_on_recipe_id", using: :btree
+
+    you would need to validate measurements to be C, TB, tsp, oz, lb,
+    you would need amount to be a fraction 1/16 1/8 1/4 1/3 3/8 1/2 2/3 5/8 3/4 7/8
+    with or without a whole number,

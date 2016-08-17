@@ -226,6 +226,9 @@
   function CategoryShowControllerFunction(CategoryFactory, RecipeFactory, $stateParams, $resource){
     console.log("in the category show controller")
     var vm = this;
+    var Recipe = $resource("/recipes/:id.json", {}, {
+        update: {method: "PUT"}
+      });
     console.log("vm "+vm[0])
     console.log("this "+this)
     console.log("id"+$stateParams.id)
@@ -238,10 +241,20 @@
     this.update = function(category){
       category.$update(category);
     }
-    this.destroy = function(category){
-      CategoryFactory.remove(category);
-      this.category.splice(category, 1)
+
+    vm.destroy = function(recipe_index){
+      console.log("id "+$stateParams.id)
+      console.log("index "+vm.recipes[recipe_index])
+      var recipe = vm.recipes[recipe_index]
+      Recipe.remove({id: recipe.id}), function(response){
+              console.log("response"+response)
+        if(response.success) vm.recipes.splice(recipe_index, 1)
+      }
     }
+    // this.destroy = function(category){
+    //   CategoryFactory.remove(category);
+    //   this.category.splice(category, 1)
+    // }
   }
   function RecipeFactoryFunction($resource) {
     return $resource("/categories/:category_id/recipes/:id.json", {}, {
@@ -262,21 +275,12 @@
       vm.is_descending = !(vm.is_descending);
     }
 
-    // vm.comment = new CommentFactory();
-    // vm.create = function(){
-    //   this.comments = CommentFactory.query()
-    //   vm.comment.$save(function(response){
-    //     console.log(vm.comment)
-    //     if(response.success) vm.com_data.push();
+    // vm.destroy = function(recipe_index){
+    //   var recipe = vm.recipe_data[recipe_index];
+    //   Recipe.remove(recipe_index, function(response){
+    //     if(response.success) vm.recipe_data.splice(recipe_index, 1);
     //   });
-    // }
-
-    vm.destroy = function(recipe_index){
-      var recipe = vm.recipe_data[recipe_index];
-      Recipe.remove(recipe_index, function(response){
-        if(response.success) vm.recipe_data.splice(recipe_index, 1);
-      });
-    }
+  //  }
 
     vm.update = function(recipe){
       Recipe.update({id: recipe.id}, recipe, function(response){
@@ -305,10 +309,18 @@
     this.update = function(recipe){
       category.$update(recipe);
     }
-    this.destroy = function(recipe){
-      CategoryFactory.remove(recipe);
-      this.category.splice(recipe, 1)
+    this.destroy = function(recipe_index){
+      console.log("catid "+$stateParams.category_id)
+      console.log("id "+$stateParams.id)
+      console.log("index "+recipe_index)
+      console.log("this recipe = "+this.recipe)
+      RecipeFactory.remove(recipe_index);
+      this.recipe.splice(recipe_index, 1)
     }
+    // vm.destroy = function($Index){
+    //   RecipeFactory.remove(category_id: $stateParams.category_id, id: $stateParams.id);
+    //   vm.recipe.splice(id: $stateParams.id, 1)
+    // }
   }
   function IngredientFactoryFunction($resource) {
     return $resource("/recipes/:recipe_id/ingredients.json", {}, {
@@ -319,30 +331,29 @@
 
   function RecipeEditControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, $stateParams, $resource){
       this.Recipe = CommentFactory.get({id: $stateParams.id},function(res){
-      console.log("in the recipe show controller")
+      console.log("in the recipe edit controller")
       var vm = this;
       console.log("vm "+vm[0])
       console.log("this "+this)
       console.log("cat id"+$stateParams.category_id)
       console.log("id"+$stateParams.id)
-      CategoryFactory.get({id: $stateParams.category_id}).$promise.then(function(category) {
-        vm.category = category
-        console.log("category"+category)
+        CategoryFactory.get({id: $stateParams.category_id}).$promise.then(function(category) {
+          vm.category = category
+          console.log("category"+category)
+        })
+        RecipeFactory.get({category_id: $stateParams.category_id, id: $stateParams.id }).$promise.then(function(recipe) {
+          vm.recipe = recipe
+          console.log("category"+recipe)
+        })
       })
-      RecipeFactory.get({category_id: $stateParams.category_id, id: $stateParams.id }).$promise.then(function(recipe) {
-        vm.recipe = recipe
-        console.log("category"+recipe)
-      })
+
 
     this.update = function(){
       this.recipe.$update({id: $stateParams.id});
     }
-    this.destroy = function(recipe){
-      console.log(recipe)
-      RecipeFactory.remove(recipe);
-      this.recipe.splice(recipe, 1)
+    vm.destroy = function(index){
+      RecipeFactory.remove(index)
+      vm.recipe.splice(index, 1)
     }
-  })
-}
-
+ }
 })(); // closes Main IFFEE

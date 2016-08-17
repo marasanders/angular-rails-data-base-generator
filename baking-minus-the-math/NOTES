@@ -1,3 +1,56 @@
+https://ndb.nal.usda.gov/ndb/foods/show/1?fgcd=&manu=&lfacet=&format=&count=&max=35&offset=&sort=&qlookup=
+
+
+function CategoryShowControllerFunction(CategoryFactory, RecipeFactory, $stateParams, $resource){
+  console.log("in the category show controller")
+  var vm = this
+  var Recipe = $resource("/catergory/:id.json", {}, {
+      update: {method: "PUT"}
+    });
+    // console.log("RECIPE"+Recipe)
+    console.log("This is RECIPE:  "+JSON.stringify(Recipe))
+  vm.recipes_data = RecipeFactory.query();
+  console.log("vm "+vm.recipes_data)
+  console.log("this "+this)
+  console.log("id"+$stateParams.id)
+  CategoryFactory.get({id: $stateParams.id}).$promise.then(function(category) {
+    vm.category = category
+    console.log("category"+category)
+  })
+  vm.recipes = RecipeFactory.query({category_id: $stateParams.id})
+  console.log("This is RECIPE:  "+JSON.stringify(vm.recipes))
+  this.update = function(category){
+    category.$update(category);
+  }
+
+  vm.destroy = function(recipe_index){
+    console.log("id "+$stateParams.id)
+    console.log("index "+vm.recipes[recipe_index])
+    var recipe = vm.recipes[recipe_index]
+    // Recipe.remove({id: recipe.id}), function(response){
+    //         console.log("response"+response)
+    //   if(response.success) vm.recipes.splice(recipe_index, 1)
+    Recipe.remove({id: recipe.id}), function(response){
+      if(response.success) vm.recipes_data.splice({recipe_index, 1)
+    }
+  }
+  // this.destroy = function(category){
+  //   CategoryFactory.remove(category);
+  //   this.category.splice(category, 1)
+  // }
+}
+
+
+
+//   vm.destroy = function(recipe_index){
+//     console.log("catid "+category_id: $stateParams.category_id), id: $stateParams.id, recipe_index)
+//     console.log("id "+id: $stateParams.id)
+//     console.log("index "+recipe_index)
+//     RecipeFactory.remove(category_id: $stateParams.category_id, id: $stateParams.id);
+//     vm.recipe.splice(recipe_index, 1)
+//   }
+
+
 // .state("recipeNew", {
 //   url: "/recipes/new",
 //   templateUrl: "recipes/new.html.erb",
