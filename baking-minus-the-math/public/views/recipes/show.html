@@ -1,8 +1,9 @@
 <div class="container-fluid">
   <main>
-    <div>{{vm.recipe.photo_url}}</div>
+        <img ng-src={{vm.photo_url}} height="42" width="42">
+    <!-- <div>{{vm.recipe.photo_url}}</div> -->
     <!-- <div><img ng-src="{{vm.recipe.photo_url}}" style="width:304px;height:228px;"/></div> -->
-    <header class = "jumbotron">
+    <header class = "jumbotron" id = "catheader" ng-style="{'background-image': 'url(' + vm.recipe.photo_url+ ')'}">
       <h1><strong>{{vm.recipe.title}}</strong></h1>
     </header>
 <span class="col-md-4">Servings :{{vm.recipe.servings}}</span>
@@ -23,6 +24,7 @@
       </thead>
     </table>
     <div>
+      {{vm.recipe.instructions}}
     </div>
   </main>
 </div>

@@ -11,25 +11,25 @@ Recipe.destroy_all
 Category.destroy_all
 
 
-cake = Category.create!(Cat_name:"Cake")
+cake = Category.create!(Cat_name:"Cake", image_url: "http://st2.depositphotos.com/1026029/5632/i/950/depositphotos_56322535-Collage-of-different-pieces-of.jpg")
 beef = Category.create!(Cat_name:"Beef")
 pasta = Category.create!(Cat_name:"Pasta")
-chicken = Category.create!(Cat_name:"Chicken")
+chicken = Category.create!(Cat_name:"Chicken", image_url: "http://foodnetwork.sndimg.com/content/dam/images/food/fullset/2014/7/14/0/FN_grilled-chicken-collage_s4x3.jpg")
 rice = Category.create!(Cat_name:"Rice")
 dessert = Category.create!(Cat_name:"Dessert")
 cookies = Category.create!(Cat_name:"Cookies")
 potatoes = Category.create!(Cat_name:"Potatoes")
 turkey = Category.create!(Cat_name:"Turkey")
 kugel = Category.create!(Cat_name:"Kugel")
-soup = Category.create!(Cat_name:"Soup")
+soup = Category.create!(Cat_name:"Soup", image_url: "http://www.kitchenstewardship.com/wp-content/uploads/2014/01/winter-soup-collage-2_thumb.jpg")
 salad = Category.create!(Cat_name:"Salad")
 vegetable = Category.create!(Cat_name:"Vegetables")
 
 
-chocolateCake = Recipe.create!(title:"Bubby's Chocolate Cake",  servings: 12, calories: 250, rating: 10, category: cake, instructions: "Put all ingredients in bowl mix until fully blended. Bake in greased 9X13 for 40 minutes.", photo_url: "chocolate_cake.jpg")
-broiledChicken = Recipe.create!(title:"1-2-3 Broiled Chicken",  servings: 4, calories: 180, rating: 8, category: chicken, instructions: "Portion chicken into 4 - 4 oz. pieces set aside. Mix remaining ingredients in ziploc bag or appropriate sized container until blended, add chicken and marinate no longer than 4 hours, broil on high or grill 7 minutes each side until centers are no longer pink.", photo_url: "Grilled-chicken.jpg")
-vanillaCake = Recipe.create!(title:"Best Vanilla Pound Cake",  servings: 12, calories: 200, rating: 9, category: cake, instructions: "Mix dry ingredients until blended, add oil and mix for 1 minute, add remaining ingredients and mix until well blended. Bake in greased 9X13 at 350 degrees for 1 hour.", photo_url: "vanilla_cake.jpg")
-butternutSquashSoup = Recipe.create!(title:"Butternut Squash Soup",  servings: 6, calories: 130, rating: 2, category: soup, instructions: "Cut butternut squash in half and bake at 375 degrees face down on baking sheet for 50 minutes. Dice onion and fry on medium heat  in 4 quart pot until transparent. Scoop flesh set aside. Alternately boil cube and peel raw butternut squash boil for 30 minutes and drain.  Add flour to onion and mix thoroughly add 1 C water mix thoroughly, add remaining water, salt, pepper and consume mix, bring to a boil. Lower flame to simmer for 10 minutes. Remove from heat and blend with hand blender. Use cream to garnish.", photo_url: "butternut-squash-soup.jpg")
+chocolateCake = Recipe.create!(title:"Bubby's Chocolate Cake",  servings: 12, calories: 250, rating: 10, category: cake, instructions: "Put all ingredients in bowl mix until fully blended. Bake in greased 9X13 for 40 minutes.", photo_url: "http://img.huffingtonpost.com/asset/scalefit_600_noupscale/562f666d1c00002e00570a9e.jpeg")
+broiledChicken = Recipe.create!(title:"1-2-3 Broiled Chicken",  servings: 4, calories: 180, rating: 8, category: chicken, instructions: "Portion chicken into 4 - 4 oz. pieces set aside. Mix remaining ingredients in ziploc bag or appropriate sized container until blended, add chicken and marinate no longer than 4 hours, broil on high or grill 7 minutes each side until centers are no longer pink.", photo_url: "http://images.huffingtonpost.com/2015-06-20-1434797673-6612373-perfectlygrilledchickenbreasts.jpg")
+vanillaCake = Recipe.create!(title:"Best Vanilla Pound Cake",  servings: 12, calories: 200, rating: 9, category: cake, instructions: "Mix dry ingredients until blended, add oil and mix for 1 minute, add remaining ingredients and mix until well blended. Bake in greased 9X13 at 350 degrees for 1 hour.", photo_url: "https://s-media-cache-ak0.pinimg.com/564x/ba/46/b4/ba46b4925755a6280ae8e098ee336b5d.jpg")
+butternutSquashSoup = Recipe.create!(title:"Butternut Squash Soup",  servings: 6, calories: 130, rating: 2, category: soup, instructions: "Cut butternut squash in half and bake at 375 degrees face down on baking sheet for 50 minutes. Dice onion and fry on medium heat  in 4 quart pot until transparent. Scoop flesh set aside. Alternately boil cube and peel raw butternut squash boil for 30 minutes and drain.  Add flour to onion and mix thoroughly add 1 C water mix thoroughly, add remaining water, salt, pepper and consume mix, bring to a boil. Lower flame to simmer for 10 minutes. Remove from heat and blend with hand blender. Use cream to garnish.", photo_url: "http://www.eateverything.xyz/wp-content/uploads/2015/11/butternut-squash-soup-with-coconut-milk-recipe-gkh88dkjh.jpg")
 
 chocolateCakeIngredient1 = Ingredient.create!(component: "Flour", amount:"2", measurement: "C", recipe: chocolateCake)
 chocolateCakeIngredient2 = Ingredient.create!(component: "Cocoa", amount:"2/3", measurement: "C", recipe: chocolateCake)

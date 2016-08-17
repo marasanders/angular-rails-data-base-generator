@@ -25,6 +25,9 @@ psql
 \q quit
 
 rails g migration AddInstructionsToRecipes instructions:text
+rails g migration AddImageUrlToCategories image_url:text
+
+rake db:migrate
 
 models/ingredient.rb -
 

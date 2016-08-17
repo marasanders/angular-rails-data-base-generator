@@ -23,7 +23,14 @@
   .controller("CategoryController", [
     "$resource",
     "CategoryFactory",
+    "$http",
     CategoryController
+  ])
+  .controller("CategoryEditController", [
+    "CategoryFactory",
+    "$stateParams",
+    "$resource",
+    CategoryEditControllerFunction
   ])
   .controller("CategoryShowController", [
     "CategoryFactory",
@@ -70,8 +77,8 @@
         controllerAs: "vm"
       })
       .state("categoryEdit", {
-        url: "/categories/:id/edit",
-        templateUrl: "categories/edit.html",
+        url: "/category/:category_id/edit",
+        templateUrl: "/views/categories/edit.html",
         controller: "CategoryEditController",
         controllerAs: "vm"
       })
@@ -119,7 +126,7 @@
       // });
   }
 
-  function CategoryController($resource, CategoryFactory){
+  function CategoryController($resource, CategoryFactory, $http){
     var vm = this;
     var Category = $resource("/categories/:id.json", {}, {
       update: {method: "PUT"}
@@ -127,8 +134,8 @@
     vm.category_data = CategoryFactory.query();
 
     vm.sort_category_data_by = function(name){
-      vm.sort_on = name;
-      vm.is_descending = !(vm.is_descending);
+      vm.sort_on = vm.category_data.Cat_name;
+      vm.is_ascending = !(vm.is_ascending);
     }
 
 
@@ -155,10 +162,42 @@
 
     vm.update = function(category){
       Category.update({id: category.id}, category, function(response){
-        console.log("Category updated!");
+        category.showEdit = !category.showEdit
+
       });
     }
+    vm.search = function(searchparams){
+      $http({
+             method: "JSONP",
+             url: "http://food2fork.com/api/search?key=8839d43ca16417686535ff6e05b77f18&q=shredded%20chicken",
+             headers: {
+                //  "Accept": "application/jsonp"
+             }
+           }).then(function successCallback(response) {
+                   console.log(response);
+             }, function errorCallback(response) {
+               console.log(response);
+             });
+    }
   }
+ //  function RecipeAPIFactoryFunction($resource) {
+ //    return $resource( "http://food2fork.com/api/search?key={API_KEY}&q=shredded%20chicken")
+ //
+ // "http://food2fork.com/api/search?key={API_KEY}&q=shredded%20chicken"
+ //     ENV["FOOD2FORK_KEY"] = '8839d43ca16417686535ff6e05b77f18'
+ //     base_uri 'http://food2fork.com/api'
+ //     default_params key: ENV["FOOD2FORK_KEY"]
+ //     format :json
+ //     console.log("In models recipe rb")
+ //     def self.for term
+ //     get("/search", query: { q: term})["recipes"]
+ //     end
+ //    end
+  //
+  //   return $resource("/categories/:id.json", {}, {
+  //     update: {method: "PUT"}
+  //   });
+  //  }
 
   function CategoryFactoryFunction($resource) {
     return $resource("/categories/:id.json", {}, {
@@ -166,18 +205,23 @@
     });
   }
 
-  // function CategoryEditControllerFunction(CategoryFactory, $stateParams){
-  //   vm.category = CategoryFactory.get({id: $stateParams.id},function(res){
-  //      console.log("This is this.category in Factory function:  "+JSON.stringify(res))
-  //   })
-  //   console.log("IN 4EDIT")
-  //   console.log("This is this.category:  "+vm.category)
-  //   vm.update = function(){
-  //     console.log("button click")
-  //     var categoryID = JSON.stringify(vm.category.id)
-  //           console.log(categoryID)
-  //     vm.category.$update({id: $stateParams.id});
-  // }
+  function CategoryEditControllerFunction(CategoryFactory, $stateParams, $resource){
+    var vm = this;
+    console.log("vm "+vm[0])
+    console.log("ID="+$statParams.id)
+    vm.category = CategoryFactory.get({id: $stateParams.id},function(res){
+         console.log("This is this.category in Factory function:  "+JSON.stringify(res))
+      })
+      console.log("IN 4EDIT")
+      console.log("This is this.category:  "+vm.category)
+      vm.update = function(){
+        console.log("button click")
+        var categoryID = JSON.stringify(vm.category.id)
+              console.log(categoryID)
+        vm.category.$update({id: $stateParams.id});
+    }
+  }
+
 
   function CategoryShowControllerFunction(CategoryFactory, RecipeFactory, $stateParams, $resource){
     console.log("in the category show controller")
