@@ -230,31 +230,40 @@
         update: {method: "PUT"}
       });
     console.log("vm "+vm[0])
-    console.log("this "+this)
+    console.log("state params "+$stateParams)
+    console.log("resource "+$resource)
     console.log("id"+$stateParams.id)
     CategoryFactory.get({id: $stateParams.id}).$promise.then(function(category) {
       vm.category = category
-      console.log("category"+category)
+      console.log("category"+JSON.stringify(category))
     })
-    vm.recipes = RecipeFactory.query({category_id: $stateParams.id})
-    console.log("recipe "+vm.recipes)
-    this.update = function(category){
-      category.$update(category);
-    }
+    // vm.recipes = RecipeFactory.query({category_id: $stateParams.id})
+    // console.log("recipe "+ vm.recipes)
+    //   // this.update = function(category){
+    //   //   category.$update(category);
+    //   // }
+
+    RecipeFactory.query({category_id: $stateParams.id}).$promise.then(function(recipes){
+      vm.recipes = recipes
+      console.log("recipe "+recipes)
+      // this.update = function(category){
+      //   category.$update(category);
+      // }
+    })
 
     vm.destroy = function(recipe_index){
       console.log("id "+$stateParams.id)
       console.log("index "+vm.recipes[recipe_index])
       var recipe = vm.recipes[recipe_index]
-      Recipe.remove({id: recipe.id}), function(response){
-              console.log("response"+response)
-        if(response.success) vm.recipes.splice(recipe_index, 1)
-      }
+      Recipe.remove({id: recipe.id})
+      vm.recipes.splice(recipe_index, 1)
+
     }
     // this.destroy = function(category){
     //   CategoryFactory.remove(category);
     //   this.category.splice(category, 1)
     // }
+
   }
   function RecipeFactoryFunction($resource) {
     return $resource("/categories/:category_id/recipes/:id.json", {}, {
