@@ -15,11 +15,11 @@
       <th colspan="3"></th>
         <tr data-ng-repeat="recipe in vm.recipes">
           <td>{{$index + 1}}.
-            <span ng-hide="recipe.showEdit">
+            <span ng-hide="recipe.showAdd">
               <a data-ui-sref="recipeShow({id: recipe.id, category_id: vm.category.id})" tabindex="1" class="large_blue">{{recipe.title}}</a>
                 <span class="btn-group pull-right row">
                   <span class="col-md-3">
-                    <button ng-click="category.showEdit = !category.showEdit" class="btn editbtn">  Edit </button>
+                    <button ng-click="recipe.showEdit = !recipe.showEdit" class="btn editbtn">  Edit </button>
                   </span>
                   <span class="col-md-1"></span>
                     <span class="col-md-3">
@@ -28,17 +28,28 @@
                   </span>
                 </span>
               </span>
-              <span ng-show="recipe.showEdit">
-                <input type="text" ng-model="recipe.title">
-                <button ng-click="vm.update(recipe)">Update</button>
-             </span>
+
           </td>
         <!-- <td>{{$index + 1}}. <a data-ng-href="{{recipe.title}}" tabindex="1" class="large_blue">{{recipe.title}}</a></td> -->
        </tr>
      </tr>
      <tr>
        <td>
-         <input type="text" data-ng-model="vm.new_recipe.title" placeholder="Enter New Recipe" /><sp> </sp><button class="createbtn" data-ng-click="vm.create()">Create</button>
+         <!-- <input type="text" data-ng-model="vm.new_recipe.title" placeholder="Enter New Recipe" /><sp> </sp><button class="createbtn" data-ng-click="vm.create()">Create</button> -->
+         <button ng-click="recipe.showAdd = !recipe.showAdd" class="btn createbtn">  Add New Recipe </button>
+         <span ng-show="recipe.showAdd">
+           <input type="text" ng-model="vm.new_recipe.title" placeholder="Recipe Title" >
+           <input type="text" ng-model="vm.new_recipe.servings" placeholder="Servings 000.00" >
+           <input type="text" ng-model="vm.new_recipe.calories" placeholder="Calories Per Serving 0000.00" >
+           <input type="text" ng-model="vm.new_recipe.ratings" placeholder="Ratings 00.00" >
+           <input type="text" ng-model="vm.new_recipe.photo_url" placeholder="Https Link to Photo" >
+           <input class="form-control input-lg" id="inputlg" type="text" ng-model="vm.new_recipe.instructions" placeholder="Instructions" >
+           <input type="text" ng-model="vm.new_recipe.category_id" ng-value="vm.new_recipe.category_id" placeholder={{vm.category.id}}><span>enter category ID for {{vm.category.Cat_name}} as shown</span>
+           <!-- <input type="text" ng-model="vm.new_recipe.category_id" ng-init=recipe.category_id={{vm.category.category_id}}> -->
+           <!-- <input type="radio" name="gender" ng-model="user.gender" ng-value="otherGender">{{otherGender}} -->
+           <button class="createbtn" data-ng-click="vm.create(); recipe.showAdd = !recipe.showAdd">Create</button>
+
+        </span>
        </td>
      </tr>
    </thead>

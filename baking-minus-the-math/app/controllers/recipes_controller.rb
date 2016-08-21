@@ -18,8 +18,9 @@ class RecipesController < ApplicationController
   end
 
   def create
+    puts "in create"
     @category = Category.find(params[:category_id])
-    @recipe = @category.recipe.create(recipe_params)
+    @recipe = @category.recipes.create!(recipe_params)
     render json: @recipe, status: :ok
   end
 
@@ -50,6 +51,7 @@ class RecipesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def recipe_params
-      params.require(:recipe).permit(:message)
+      params.require(:recipe).permit(:title, :servings, :calories, :ratings, :category_id, :instructions, :photo_url)
     end
+
 end
