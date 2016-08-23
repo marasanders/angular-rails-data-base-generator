@@ -66,6 +66,7 @@
     "IngredientFactory",
     "$stateParams",
     "$resource",
+    "$state",
     RecipeEditControllerFunction
   ]);
 
@@ -135,6 +136,7 @@
   }
 
   function CategoryController($resource, CategoryFactory, $http){
+    // event.preventDefault();
     var vm = this;
     var Category = $resource("/categories/:id.json", {}, {
       update: {method: "PUT"}
@@ -259,6 +261,26 @@
       // }
     })
 
+      vm.update = function(recipe){
+        console.log("recipe update recipe"+ recipe)
+        Recipe.update({id: recipe.id}, recipe, function(response){
+          console.log ("Recipe Update response "+response)
+        })
+      }
+
+
+
+        vm.destroy = function(recipe_index){
+          console.log("id "+$stateParams.id)
+          console.log("index "+vm.recipes[recipe_index])
+          var recipe = vm.recipes[recipe_index]
+          Recipe.remove({id: recipe.id})
+          vm.recipes.splice(recipe_index, 1)
+
+        }
+
+
+
 
     vm.new_recipe = new RecipeFactory(); //{category_id: $stateParams.id});
     console.log("ID"+$stateParams.id)
@@ -280,18 +302,6 @@
      }
 
 
-    vm.destroy = function(recipe_index){
-      console.log("id "+$stateParams.id)
-      console.log("index "+vm.recipes[recipe_index])
-      var recipe = vm.recipes[recipe_index]
-      Recipe.remove({id: recipe.id})
-      vm.recipes.splice(recipe_index, 1)
-
-    }
-    // this.destroy = function(category){
-    //   CategoryFactory.remove(category);
-    //   this.category.splice(category, 1)
-    // }
 
   }
   function RecipeFactoryFunction($resource) {
@@ -355,7 +365,7 @@
     console.log("ingredients "+vm.ingredients)
 
     this.update = function(recipe){
-      category.$update(recipe);
+      recipe.$update(recipe);
     }
     this.destroy = function(recipe_index){
       console.log("catid "+$stateParams.category_id)
@@ -377,31 +387,38 @@
   }
 
 
-  function RecipeEditControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, $stateParams, $resource){
-      this.Recipe = CommentFactory.get({id: $stateParams.id},function(res){
+  function RecipeEditControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, $stateParams, $resource, $state){
       console.log("in the recipe edit controller")
       var vm = this;
       console.log("vm "+vm[0])
       console.log("this "+this)
       console.log("cat id"+$stateParams.category_id)
       console.log("id"+$stateParams.id)
-        CategoryFactory.get({id: $stateParams.category_id}).$promise.then(function(category) {
-          vm.category = category
-          console.log("category"+category)
-        })
-        RecipeFactory.get({category_id: $stateParams.category_id, id: $stateParams.id }).$promise.then(function(recipe) {
-          vm.recipe = recipe
-          console.log("category"+recipe)
-        })
+      // CategoryFactory.get({category_id: $stateParams.category_id}).$promise.then(function(category) {
+      //   vm.category = category
+      //   console.log("category"+category)
+      // })
+      RecipeFactory.get({category_id: $stateParams.category_id, id: $stateParams.id }).$promise.then(function(recipe) {
+        vm.recipe = recipe
+        console.log("category"+JSON.stringify(recipe))
       })
+      vm.ingredients = IngredientFactory.query({recipe_id: $stateParams.id})
+      console.log("ingredients "+vm.ingredients)
 
 
-    this.update = function(){
-      this.recipe.$update({id: $stateParams.id});
-    }
-    vm.destroy = function(index){
-      RecipeFactory.remove(index)
-      vm.recipe.splice(index, 1)
-    }
+      vm.update = function(recipe){
+        console.log(" update ID"+JSON.stringify($stateParams.id))
+        console.log(" update catID"+JSON.stringify($stateParams.category_id))
+
+        vm.recipe.$update({category_id: $stateParams.category_id, id: $stateParams.id}), function(response){
+          console.log("updated")
+        }
+        // $state.go("categoryIndex", {}, {reload: true});
+      }
+
+      vm.destroy = function(index){
+        RecipeFactory.remove(index)
+        vm.recipe.splice(index, 1)
+      }
  }
 })(); // closes Main IFFEE
