@@ -447,8 +447,12 @@
 
         vm.recipe.$update({category_id: $stateParams.category_id, id: $stateParams.id}), function(response){
           console.log("updated")
+
         }
-        // $state.go("categoryIndex", {}, {reload: true});
+        // vm.recipe.$update({category_id: $stateParams.category_id, id: $stateParams.id}).then(function(response){
+        //   console.log("updated")
+        //   $state.go("categoryIndex", {}, {reload: true});
+        // })
       }
 
       vm.destroy = function(index){
