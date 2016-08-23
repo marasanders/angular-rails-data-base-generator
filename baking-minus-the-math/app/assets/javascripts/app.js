@@ -35,6 +35,7 @@
   .controller("CategoryShowController", [
     "CategoryFactory",
     "RecipeFactory",
+    "IngredientFactory",
     "$stateParams",
     "$resource",
     CategoryShowControllerFunction
@@ -135,6 +136,7 @@
       // });
   }
 
+
   function CategoryController($resource, CategoryFactory, $http){
     // event.preventDefault();
     var vm = this;
@@ -179,9 +181,9 @@
     vm.search = function(searchparams){
       $http({
              method: "JSONP",
-             url: "http://food2fork.com/api/search?key=8839d43ca16417686535ff6e05b77f18&q=shredded%20chicken",
+             url: "http//food2fork.com/api/search?key=8839d43ca16417686535ff6e05b77f18&q=shredded%20chicken",
              headers: {
-                //  "Accept": "application/jsonp"
+                 "Accept": "application/jsonp"
              }
            }).then(function successCallback(response) {
                    console.log(response);
@@ -215,25 +217,26 @@
     });
   }
 
+
   function CategoryEditControllerFunction(CategoryFactory, $stateParams, $resource){
-    var vm = this;
-    console.log("vm "+vm[0])
-    console.log("ID="+$statParams.id)
-    vm.category = CategoryFactory.get({id: $stateParams.id},function(res){
-         console.log("This is this.category in Factory function:  "+JSON.stringify(res))
-      })
-      console.log("IN 4EDIT")
-      console.log("This is this.category:  "+vm.category)
-      vm.update = function(){
-        console.log("button click")
-        var categoryID = JSON.stringify(vm.category.id)
-              console.log(categoryID)
-        vm.category.$update({id: $stateParams.id});
-    }
+    // var vm = this;
+    // console.log("vm "+vm[0])
+    // console.log("ID="+$statParams.id)
+    // vm.category = CategoryFactory.get({id: $stateParams.id},function(res){
+    //      console.log("This is this.category in Factory function:  "+JSON.stringify(res))
+    //   })
+    //   console.log("IN 4EDIT")
+    //   console.log("This is this.category:  "+vm.category)
+    //   vm.update = function(){
+    //     console.log("button click")
+    //     var categoryID = JSON.stringify(vm.category.id)
+    //           console.log(categoryID)
+    //     vm.category.$update({id: $stateParams.id});
+    // }
   }
 
 
-  function CategoryShowControllerFunction(CategoryFactory, RecipeFactory, $stateParams, $resource){
+  function CategoryShowControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, $stateParams, $resource){
     console.log("in the category show controller")
     var vm = this;
     var Recipe = $resource("/recipes/:id.json", {}, {
@@ -260,6 +263,8 @@
       //   category.$update(category);
       // }
     })
+
+
 
       vm.update = function(recipe){
         console.log("recipe update recipe"+ recipe)
@@ -299,8 +304,37 @@
        vm.recipes.push(angular.copy(vm.new_recipe));
        vm.new_recipe = {};
       //  recipe.showAdd = !recipe.showAdd
+
      }
 
+    //  vm.new_ingredient = new IngredientFactory(); //{category_id: $stateParams.id});
+    //  console.log("ID"+$stateParams.id)
+    //  console.log("IDr"+$stateParams.recipe_id)
+    //  console.log("NEW INGREDIENT "+JSON.stringify(vm.new_ingredient))
+    //   vm.new = function(){
+    //     IngredientFactory.query({recipe_id: vm.recipe.id}).$promise.then(function(ingredients){
+    //       vm.ingredients = ingredients
+    //       console.log("ingredients after recipe add "+JSON.stringify(ingredients))
+    //       if (!vm.ingredients){
+    //         vm.ingredients=[]
+          // }
+          // this.update = function(category){
+          //   category.$update(category);
+          // }
+        // })
+    //    console.log("ingredients after recipe add 222"+JSON.stringify(ingredients))
+    //     console.log("in create ingredient function!")
+    //    console.log("recipe componenet "+vm.new_ingredient)
+    //    vm.new_ingredient.$save({recipe_id: $stateParams.recipe_id}, function(response){
+    //      console.log("response "+response)
+    //      if(response.success) vm.new_ingredient.push(response);
+    //      vm.new_ingredient = new RecipeFactory(); //{category_id: $stateParams.id});
+    //      console.log("ID"+$stateParams.id)
+    //      console.log("NEW RECIPE "+vm.new_ingredient)
+    //  })
+    //     vm.ingredients.push(angular.copy(vm.new_ingredient));
+    //     vm.new_ingredient = {};
+    //   }
 
 
   }
@@ -311,6 +345,7 @@
       update: {method: "PUT"}
     });
   }
+
 
   // function CreateRecipeFactoryFunction($resource) {
   //   // console.log()
@@ -421,4 +456,6 @@
         vm.recipe.splice(index, 1)
       }
  }
+
+
 })(); // closes Main IFFEE
