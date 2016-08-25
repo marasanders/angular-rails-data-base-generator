@@ -295,18 +295,20 @@
     console.log("NEW RECIPE "+JSON.stringify(vm.new_recipe))
      vm.create = function(){
        console.log("in create function!")
-      console.log("recipe title "+vm.new_recipe)
-      vm.new_recipe.$save({category_id: $stateParams.id}, function(response){
-
-        console.log("response "+response)
-        if(response.success) vm.new_recipe.push(response);
-        vm.new_recipe = new RecipeFactory(); //{category_id: $stateParams.id});
-        console.log("ID"+$stateParams.id)
-        console.log("NEW RECIPE "+vm.new_recipe)
-    })
-       vm.recipes.push(angular.copy(vm.new_recipe));
-       vm.new_recipe = {};
-      //  recipe.showAdd = !recipe.showAdd
+      console.log("recipe title "+vm.new_recipe.title)
+        if (vm.new_recipe.title) {
+           vm.new_recipe.$save({category_id: $stateParams.id}, function(response){
+           console.log("response "+response)
+           if(response.success) vm.new_recipe.push(response);
+           vm.new_recipe = new RecipeFactory(); //{category_id: $stateParams.id});
+           console.log("ID"+$stateParams.id)
+           console.log("NEW RECIPE "+vm.new_recipe)
+         })
+         vm.recipes.push(angular.copy(vm.new_recipe));
+       } else {
+         alert("Recipe name can not be blank!!");
+       }
+         vm.new_recipe = {};
 
      }
 
