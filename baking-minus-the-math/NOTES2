@@ -145,10 +145,10 @@
     });
     vm.category_data = CategoryFactory.query();
 
-    vm.sort_category_data_by = function(name){
-      vm.sort_on = vm.category_data.Cat_name;
-      vm.is_ascending = !(vm.is_ascending);
-    }
+    // vm.sort_category_data_by = function(name){
+    //   vm.sort_on = vm.category_data.Cat_name;
+    //   vm.is_ascending = !(vm.is_ascending);
+    // }
 
 
     vm.destroy = function(category_index){
@@ -159,18 +159,24 @@
       });
     }
 
-      vm.new_category = new CategoryFactory();
-       vm.create = function(){
-        //  console.log("category"+vm.new_category.Cat_name)
-        Category.save(vm.new_category, function(response){
-        // console.log("response "+response)
-        if(response.success) vm.catgory_data.push(response);
-        vm.new_catgory = new CategoryFactory();
-      })
-         vm.category_data.push(angular.copy(vm.new_category));
-         vm.new_category = {};
-       }
+    vm.new_recipe = new RecipeFactory(); //{category_id: $stateParams.id});
+    console.log("ID"+$stateParams.id)
+    console.log("NEW RECIPE "+JSON.stringify(vm.new_recipe))
+     vm.create = function(){
+       console.log("in create function!")
+      console.log("recipe title "+vm.new_recipe)
+      vm.new_recipe.$save({category_id: $stateParams.id}, function(response){
 
+        console.log("response "+response)
+        if(response.success) vm.new_recipe.push(response);
+        vm.new_recipe = new RecipeFactory(); //{category_id: $stateParams.id});
+        console.log("ID"+$stateParams.id)
+        console.log("NEW RECIPE "+vm.new_recipe)
+    })
+       vm.recipes.push(angular.copy(vm.new_recipe));
+       vm.new_recipe = {};
+      //  recipe.showAdd = !recipe.showAdd
+     }
 
 
     vm.update = function(category){
@@ -181,18 +187,20 @@
     }
     vm.search = function(searchparams){
       $http({
-             method: "JSONP",
-             url: "http//food2fork.com/api/search?key=8839d43ca16417686535ff6e05b77f18&q=shredded%20chicken",
-             headers: {
+             method: "JSONP",
+             url: "http//food2fork.com/api/search?key=8839d43ca16417686535ff6e05b77f18&q=shredded%20chicken",
+             headers: {
                  "Accept": "application/jsonp"
-             }
-           }).then(function successCallback(response) {
-                   console.log(response);
-             }, function errorCallback(response) {
-               console.log(response);
-             });
+             }
+           }).then(function successCallback(response) {
+                   console.log(response);
+             }, function errorCallback(response) {
+               console.log(response);
+             });
     }
   }
+
+
  //  function RecipeAPIFactoryFunction($resource) {
  //    return $resource( "http://food2fork.com/api/search?key={API_KEY}&q=shredded%20chicken")
  //
@@ -214,6 +222,14 @@
 
   function CategoryFactoryFunction($resource) {
     return $resource("/categories/:id.json", {}, {
+      update: {method: "PUT"}
+    });
+  }
+
+  function RecipeFactoryFunction($resource) {
+    // console.log()
+    // return $resource("/categories/" + $stateParams.id + "/recipes/:id.json", {}, {
+    return $resource("/categories/:category_id/recipes/:id.json", {}, {
       update: {method: "PUT"}
     });
   }
@@ -251,11 +267,7 @@
       vm.category = category
       console.log("category"+JSON.stringify(category))
     })
-    // vm.recipes = RecipeFactory.query({category_id: $stateParams.id})
-    // console.log("recipe "+ vm.recipes)
-    //   // this.update = function(category){
-    //   //   category.$update(category);
-    //   // }
+
 
     RecipeFactory.query({category_id: $stateParams.id}).$promise.then(function(recipes){
       vm.recipes = recipes
@@ -339,13 +351,7 @@
 
 
   }
-  function RecipeFactoryFunction($resource) {
-    // console.log()
-    // return $resource("/categories/" + $stateParams.id + "/recipes/:id.json", {}, {
-    return $resource("/categories/:category_id/recipes/:id.json", {}, {
-      update: {method: "PUT"}
-    });
-  }
+
 
 
   // function CreateRecipeFactoryFunction($resource) {
