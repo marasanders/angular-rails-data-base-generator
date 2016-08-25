@@ -26,6 +26,192 @@
     "$http",
     CategoryController
   ])
+  // .controller("CategoryEditController", [
+  //   "CategoryFactory",
+  //   "$stateParams",
+  //   "$resource",
+  //   CategoryEditControllerFunction
+  // ])
+  .controller("CategoryShowController", [
+    "CategoryFactory",
+    "RecipeFactory",
+    "IngredientFactory",
+    "$stateParams",
+    "$resource",
+    CategoryShowControllerFunction
+  ])
+  .controller("RecipeIndexController", [
+    "$resource",
+    "RecipeFactory",
+    RecipeController
+  ])
+  .controller("RecipeShowController", [
+    "CategoryFactory",
+    "RecipeFactory",
+    "IngredientFactory",
+    "$stateParams",
+    "$resource",
+    RecipeShowControllerFunction
+  ])
+  // .controller("RecipeNewController", [
+  //   "CategoryFactory",
+  //   "RecipeFactory",
+  //   "IngredientFactory",
+  //   "$stateParams",
+  //   "$resource",
+  //   RecipeNewControllerFunction
+  // ])
+  .controller("RecipeEditController", [
+    "CategoryFactory",
+    "RecipeFactory",
+    "IngredientFactory",
+    "$stateParams",
+    "$resource",
+    "$state",
+    RecipeEditControllerFunction
+  ]);
+
+    function RouterFunction($stateProvider, $locationProvider){
+      // $locationProvider.html5Mode(true);
+      $stateProvider
+      .state("categoryIndex", {
+        url: "",
+        templateUrl: "/views/categories/index.html",
+        controller: "CategoryController",
+        controllerAs: "vm"
+      })
+      .state("categoryShow", {
+        url: "/:id",
+        templateUrl: "/views/categories/show.html",
+        controller: "CategoryShowController",
+        controllerAs: "vm"
+      })
+      // .state("categoryEdit", {
+      //   url: "/category/:category_id/edit",
+      //   templateUrl: "/views/categories/edit.html",
+      //   controller: "CategoryEditController",
+      //   controllerAs: "vm"
+      // })
+      .state("recipeIndex", {
+        url: "/recipes",
+        templateUrl: "recipes/index.html.erb",
+        controller: "RecipeIndexController",
+        controllerAs: "RecipeIndexViewModel"
+      })
+      .state("recipeNew", {
+        url: "/recipes/new",
+        templateUrl: "recipes/new.html.erb",
+        controller: "RecipeNewController",
+        controllerAs: "vm"
+      })
+      .state("recipeEdit", {
+        url: "/category/:category_id/recipes/:id/edit",
+        templateUrl: "/views/recipes/edit.html",
+        controller: "RecipeEditController",
+        controllerAs: "vm"
+      })
+      .state("recipeShow", {
+        url: "/category/:category_id/recipes/:id",
+        templateUrl: "/views/recipes/show.html",
+        controller: "RecipeShowController",
+        controllerAs: "vm"
+      })
+      // .state("ingredientIndex", {
+      //   url: "/ingredients",
+      //   templateUrl: "ingredients/index.html.erb",
+      //   controller: "ingredient_controller",
+      //   controllerAs: "IngredientIndexViewModel"
+      // })
+      // .state("ingredientEdit", {
+      //   url: "/ingredients/:id/edit",
+      //   templateUrl: "ingredients/edit.html.erb",
+      //   controller: "IngredientEditController",
+      //   controllerAs: "IngredientEditViewModel"
+      // })
+      // .state("ingredientShow", {
+      //   url: "/ingredients/:id",
+      //   templateUrl: "ingredients/show.html.erb",
+      //   controller: "IngredientShowController",
+      //   controllerAs: "IngredientShowViewModel"
+      // });
+  }
+
+// Display Recipe Category index
+
+  function CategoryController($resource, CategoryFactory, $http){
+    var vm = this;
+    vm.category_data = {}
+// Get the Categories from the Database
+    var Category = $resource("/categories/:id.json", {}, {
+      update: {method: "PUT"}
+    });
+    vm.category_data = CategoryFactory.query();
+
+
+// Delete Category
+    vm.destroy = function(category_index){
+      var category = vm.category_data[category_index];
+      Category.remove({id: category.id}, function(response){
+        if(response.success) vm.category_data.splice(category_index, 1);
+      });
+    }
+
+//Create new Category if not Blank otherwise throw erroer message
+       vm.new_category = new CategoryFactory();
+       vm.create = function(){
+          if (vm.new_category.Cat_name){
+            Category.save(vm.new_category, function(response){
+              if(response.success) vm.catgory_data.push(response);
+                vm.new_catgory = new CategoryFactory();
+            })
+            vm.category_data.push(angular.copy(vm.new_category));
+          }else{
+            alert("Category can not be blank!!");
+          }
+            vm.new_category = {};
+       }
+
+    vm.update = function(category){
+      Category.update({id: category.id}, category, function(response){
+        category.showEdit = !category.showEdit
+
+      });
+    }
+
+
+
+
+
+
+
+"use strict";
+
+(function(){
+  angular
+  .module("luv2cook", [
+    "ui.router",
+    "ngResource",
+    "categories"
+  ])
+  .config(["$stateProvider", "$locationProvider", RouterFunction])
+  .factory("CategoryFactory", [
+    "$resource",
+    CategoryFactoryFunction
+  ])
+  .factory("RecipeFactory", [
+    "$resource",
+    RecipeFactoryFunction
+  ])
+  .factory("IngredientFactory", [
+    "$resource",
+    IngredientFactoryFunction
+  ])
+  .controller("CategoryController", [
+    "$resource",
+    "CategoryFactory",
+    "$http",
+    CategoryController
+  ])
   .controller("CategoryEditController", [
     "CategoryFactory",
     "$stateParams",
