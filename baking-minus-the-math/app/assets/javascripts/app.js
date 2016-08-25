@@ -159,19 +159,21 @@
       });
     }
 
-      vm.new_category = new CategoryFactory();
+       vm.new_category = new CategoryFactory();
        vm.create = function(){
+          if (vm.new_category.Cat_name){
         //  console.log("category"+vm.new_category.Cat_name)
-        Category.save(vm.new_category, function(response){
+            Category.save(vm.new_category, function(response){
         // console.log("response "+response)
-        if(response.success) vm.catgory_data.push(response);
-        vm.new_catgory = new CategoryFactory();
-      })
-         vm.category_data.push(angular.copy(vm.new_category));
-         vm.new_category = {};
+             if(response.success) vm.catgory_data.push(response);
+             vm.new_catgory = new CategoryFactory();
+            })
+            vm.category_data.push(angular.copy(vm.new_category));
+          } else {
+            alert("Category can not be blank!!");
+          }
+            vm.new_category = {};
        }
-
-
 
     vm.update = function(category){
       Category.update({id: category.id}, category, function(response){
