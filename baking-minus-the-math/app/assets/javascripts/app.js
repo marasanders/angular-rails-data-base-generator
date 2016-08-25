@@ -140,6 +140,7 @@
   function CategoryController($resource, CategoryFactory, $http){
     // event.preventDefault();
     var vm = this;
+    vm.category_data = {}
     var Category = $resource("/categories/:id.json", {}, {
       update: {method: "PUT"}
     });

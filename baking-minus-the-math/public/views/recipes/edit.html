@@ -14,13 +14,21 @@
       <tr>
         <td>
            <span>
+             <label for="vm.recipe.title">Recipe Name </label>
              <input type="text" ng-model="vm.recipe.title">
+             <label for="vm.recipe.servings">Servings </label>
              <input type="text" ng-model="vm.recipe.servings">
+             <label for="vm.recipe.calories">Calories per Serving</label>
              <input type="text" ng-model="vm.recipe.calories">
-             <input type="text" ng-model="vm.recipe.ratings">
+              <label for="vm.recipe.rating">Ratings - 10 is the Best</label>
+             <input type="text" ng-model="vm.recipe.rating">
+              <label for="vm.recipe.photo_url">Photo URL</label>
              <input type="text" ng-model="vm.recipe.photo_url">
-             <input class="form-control input-lg" id="inputlg" type="text" ng-model="vm.recipe.instructions">
-             <button class="editbtn" data-ng-click="vm.update(recipe)">Update</button>
+             <label for="vm.recipe.instructions">Instructions </label>
+             <input class="form-control input-lg" id="inputlg" type="text" ng-model="vm.recipe.instructions"></br>
+             <button class="btn editbtn" data-ng-click="vm.update(recipe)">Update</button>
+             <button data-ui-sref="categoryShow({id: vm.recipe.category_id})" class="btn updatebtn">Go Back</button>
+             <button data-ui-sref="recipeShow({id: vm.recipe.id, category_id: vm.recipe.category_id})" class="btn createbtn">View Recipe</button>
           </span>
         </td>
       </tr>
