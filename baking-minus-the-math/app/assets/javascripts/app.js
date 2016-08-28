@@ -380,6 +380,22 @@
     //   RecipeFactory.remove(category_id: $stateParams.category_id, id: $stateParams.id);
     //   vm.recipe.splice(id: $stateParams.id, 1)
     // }
+    vm.new_ingredient = new IngredientFactory(); //{category_id: $stateParams.id});
+    console.log("ID"+$stateParams.id)
+    console.log("IDr"+$stateParams.recipe_id)
+    console.log("NEW INGREDIENT "+JSON.stringify(vm.new_ingredient))
+     vm.create = function(){
+     console.log("NEWINGREDIENT "+JSON.stringify(vm.new_ingredient.component))
+        vm.new_ingredient.$save({recipe_id: $stateParams.id}, function(response){
+       console.log("RESPONSE "+JSON.stringify(response))
+        if(response.success) vm.new_ingredient.push(response);
+           vm.new_ingredient = new IngredientFactory();
+         })
+     console.log("NEWINGREDIENT 2 "+JSON.stringify(vm.new_ingredient))
+     vm.ingredients.push(angular.copy(vm.new_ingredient))
+     console.log("VM.INGREDIENTS "+JSON.stringify(vm.ingredients))
+     vm.new_ingredient = {}
+    }
   }
   function IngredientFactoryFunction($resource) {
     return $resource("/recipes/:recipe_id/ingredients.json", {}, {
@@ -420,18 +436,18 @@
 
 
 
-       vm.new_ingredient = new IngredientFactory(); //{category_id: $stateParams.id});
-       console.log("ID"+$stateParams.id)
-       console.log("IDr"+$stateParams.recipe_id)
-       console.log("NEW INGREDIENT "+JSON.stringify(vm.new_ingredient))
-        vm.create = function(){
-              vm.new_ingredient.$save({recipe_id: $stateParams.id}, function(response){
-                if(response.success) vm.new_ingredient.push(response);
-                vm.new_ingredient = new IngredientFactory();
-              })
-              vm.ingredients.push(angular.copy(vm.new_ingredient))
-              vm.new_ingredient = {}
-        }
+      //  vm.new_ingredient = new IngredientFactory(); //{category_id: $stateParams.id});
+      //  console.log("ID"+$stateParams.id)
+      //  console.log("IDr"+$stateParams.recipe_id)
+      //  console.log("NEW INGREDIENT "+JSON.stringify(vm.new_ingredient))
+      //   vm.create = function(){
+      //         vm.new_ingredient.$save({recipe_id: $stateParams.id}, function(response){
+      //           if(response.success) vm.new_ingredient.push(response);
+      //           vm.new_ingredient = new IngredientFactory();
+      //         })
+      //         vm.ingredients.push(angular.copy(vm.new_ingredient))
+      //         vm.new_ingredient = {}
+      //   }
 
 
 
