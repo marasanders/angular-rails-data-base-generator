@@ -19,7 +19,8 @@ class IngredientsController < ApplicationController
 
   def create
     @recipe = Recipe.find(params[:recipe_id])
-    @ingredient = @recipe.ingredient.create(ingredient_params)
+    puts "Random text #{ingredient_params}"
+    @ingredient = @recipe.ingredients.create!(ingredient_params)
     render json: @ingredient, status: :ok
   end
 
@@ -54,6 +55,7 @@ class IngredientsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def ingredient_params
-      params.require(:ingredient).permit(:message)
+      params.require(:ingredient).permit(:component, :amount, :measurement, :amount1, :measurement1, :amount2, :measurement2, :amount3, :measurement3, :amount4, :measurement4, :amount5, :measurement5)
     end
+
 end

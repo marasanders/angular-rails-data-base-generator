@@ -1,3 +1,20 @@
+vm.new_category = new CategoryFactory();
+vm.create = function(){
+   if (vm.new_category.Cat_name){
+      Category.save(vm.new_category, function(response){
+        if(response.success) vm.catgory_data.push(response);
+        vm.new_catgory = new CategoryFactory();
+      })
+      vm.category_data.push(angular.copy(vm.new_category));
+   }else{
+     alert("Category can not be blank!!");
+   }
+   $state.go('categoryIndex')
+   vm.new_category = {};
+}
+
+
+
 "use strict";
 
 (function(){
@@ -156,7 +173,7 @@
       });
     }
 
-//Create new Category if not Blank otherwise throw erroer message
+//Create new Category if not Blank otherwise throw error message
        vm.new_category = new CategoryFactory();
        vm.create = function(){
           if (vm.new_category.Cat_name){
@@ -502,6 +519,7 @@
     })
        vm.recipes.push(angular.copy(vm.new_recipe));
        vm.new_recipe = {};
+       vm.ingredients = {}
       //  recipe.showAdd = !recipe.showAdd
 
      }
@@ -510,9 +528,16 @@
     //  console.log("ID"+$stateParams.id)
     //  console.log("IDr"+$stateParams.recipe_id)
     //  console.log("NEW INGREDIENT "+JSON.stringify(vm.new_ingredient))
-    //   vm.new = function(){
+    //   vm.create = function(){
+            vm.new_ingredient.$save({recipe_id: $stateParams.id}, function(response){
+              if(response.success) vm.new_ingredient.push(response);
+              vm.new_ingredient = new IngredientFactory();
+            })
+            vm.ingredients.push(angular.copy(vm.new_ingredient))
+            vm.new_ingredient = {}
+
     //     IngredientFactory.query({recipe_id: vm.recipe.id}).$promise.then(function(ingredients){
-    //       vm.ingredients = ingredients
+    //       vm.new_ingredients = ingredients
     //       console.log("ingredients after recipe add "+JSON.stringify(ingredients))
     //       if (!vm.ingredients){
     //         vm.ingredients=[]

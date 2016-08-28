@@ -29,6 +29,13 @@
              <button class="btn editbtn" data-ng-click="vm.update(recipe)">Update</button>
              <button data-ui-sref="categoryShow({id: vm.recipe.category_id})" class="btn updatebtn">Go Back</button>
              <button data-ui-sref="recipeShow({id: vm.recipe.id, category_id: vm.recipe.category_id})" class="btn createbtn">View Recipe</button>
+             <!-- <span ng-show="ingredients.showAdd"> -->
+               <input type="text" ng-model="vm.new_ingredient.component" placeholder="Enter Ingredient" >
+               <input type="text" ng-model="vm.new_ingredient.amount" placeholder="Enter Amount" >
+               <!-- <input type="radio" name="gender" ng-model="user.gender" ng-value="otherGender">{{otherGender}} -->
+               <button class="createbtn" data-ng-click="vm.create()">Create Ingredient</button>
+               <!-- <button class="deletebtn" data-ng-click="recipe.showAdd = !recipe.showAdd"; "ingredients.showAdd = !ingredients.showAdd">All Done</button> -->
+            </span>
           </span>
         </td>
       </tr>
