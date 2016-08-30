@@ -26,7 +26,6 @@ class IngredientsController < ApplicationController
 
   def update
     @ingredient = Ingredient.find(params[:id])
-    binding.pry
     @ingredient.update(ingredient_params)
     respond_to do |format|
       format.html

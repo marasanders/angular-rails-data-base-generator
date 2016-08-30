@@ -33,6 +33,7 @@
     "IngredientFactory",
     "$stateParams",
     "$resource",
+    "$state",
     CategoryShowControllerFunction
   ])
   .controller("RecipeIndexController", [
@@ -46,6 +47,7 @@
     "IngredientFactory",
     "$stateParams",
     "$resource",
+    "$state",
     RecipeShowControllerFunction
   ])
   // .controller("RecipeNewController", [
@@ -187,7 +189,7 @@
   }
 
 
-  function CategoryShowControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, $stateParams, $resource){
+  function CategoryShowControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, $stateParams, $resource, $state){
     console.log("in the category show controller")
     var vm = this;
     var Recipe = $resource("/recipes/:id.json", {}, {
@@ -237,7 +239,7 @@
 
 
 
-
+//Add a new recipe must reload vm.recipes through recipe factory after add update with new Ingredient ID
     vm.new_recipe = new RecipeFactory(); //{category_id: $stateParams.id});
     console.log("ID"+$stateParams.id)
     console.log("NEW RECIPE "+JSON.stringify(vm.new_recipe))
@@ -246,7 +248,21 @@
       console.log("recipe title "+vm.new_recipe.title)
         if (vm.new_recipe.title) {
            vm.new_recipe.$save({category_id: $stateParams.id}, function(response){
+           console.log("IN SAVE NEW")
            console.log("response "+response)
+           RecipeFactory.query({category_id: $stateParams.id}).$promise.then(function(recipes){
+             vm.recipes = recipes
+             console.log("recipes after add "+JSON.stringify(recipes))
+            //  var sortedData= array .sort((function (a, b) {
+            //                   return new Date(b.date) - new Date(a.date)
+            //                 }));
+             var newRecipes = recipes.sort(function(a,b){return new Date(a.created_at) - new Date(b.created_at)});
+             var newRecipe = {}
+             newRecipe = newRecipes[recipes.length - 1]
+             console.log("recipe id"+JSON.stringify(newRecipe))
+             console.log("SORTED RECIPES"+JSON.stringify(newRecipes))
+             $state.go("recipeEdit", {id: newRecipe.id, category_id: $stateParams.id}, {reload: true})
+           })
           //  if(response.success) vm.recipes.push(response);
            vm.new_recipe = new RecipeFactory(); //{category_id: $stateParams.id});
            console.log("ID"+$stateParams.id)
@@ -259,6 +275,7 @@
          vm.new_recipe = {};
          vm.ingredients = {}
        }
+
 
       //  vm.new_ingredient = new IngredientFactory(); //{category_id: $stateParams.id});
       //  console.log("ID"+$stateParams.id)
@@ -347,7 +364,7 @@
       });
     }
   }
-  function RecipeShowControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, $stateParams, $resource){
+  function RecipeShowControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, $stateParams, $resource, $state){
     console.log("in the recipe show controller")
     var vm = this;
     console.log("vm "+vm[0])
@@ -362,20 +379,41 @@
       vm.recipe = recipe
       console.log("category"+recipe)
     })
+    // IngredientFactory.query({recipe_id: $stateParams.id}).$promise.then(function(ingredients){
+    //   vm.ingredients = ingredients
+    //   console.log("recipe "+JSON.stringify(ingredients)
+    // console.log("ingredients "+vm.ingredients)
     vm.ingredients = IngredientFactory.query({recipe_id: $stateParams.id})
     console.log("ingredients "+vm.ingredients)
+    var Ingredient = $resource("/ingredients/:id.json", {}, {
+        update: {method: "PUT"}
+      });
 
-    this.update = function(recipe){
-      recipe.$update(recipe);
+      vm.update = function(ing){
+        console.log("UPDATEINGREDIENT"+JSON.stringify(ing))
+        Ingredient.update({id: ing.id}, ing, function(response){
+          // ingredient.showEdit = !ingredient.showEdit
+        });
+        console.log("cat id"+$stateParams.category_id)
+        console.log("recipe id"+ing.recipe_id)
+      }
+
+    vm.destroy = function(ing){
+      console.log("index"+JSON.stringify(ing))
+      Ingredient.remove({id: ing.id}, function(response){
+        if(response.success) vm.ingredients.splice(vm.ingredients.indexOf(ing), 1);
+      });
     }
-    this.destroy = function(recipe_index){
-      console.log("catid "+$stateParams.category_id)
-      console.log("id "+$stateParams.id)
-      console.log("index "+recipe_index)
-      console.log("this recipe = "+this.recipe)
-      RecipeFactory.remove(recipe_index);
-      this.recipe.splice(recipe_index, 1)
-    }
+
+
+    // this.destroy = function(recipe_index){
+    //   console.log("catid "+$stateParams.category_id)
+    //   console.log("id "+$stateParams.id)
+    //   console.log("index "+recipe_index)
+    //   console.log("this recipe = "+this.recipe)
+    //   RecipeFactory.remove(recipe_index);
+    //   this.recipe.splice(recipe_index, 1)
+    // }
     // vm.destroy = function($Index){
     //   RecipeFactory.remove(category_id: $stateParams.category_id, id: $stateParams.id);
     //   vm.recipe.splice(id: $stateParams.id, 1)
@@ -398,7 +436,7 @@
     }
   }
   function IngredientFactoryFunction($resource) {
-    return $resource("/recipes/:recipe_id/ingredients.json", {}, {
+    return $resource("/recipes/:recipe_id/ingredients/:id.json", {}, {
       update: {method: "PUT"}
     })
   }
