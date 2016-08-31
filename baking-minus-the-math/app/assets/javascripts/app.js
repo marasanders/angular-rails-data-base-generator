@@ -20,6 +20,10 @@
     "$resource",
     IngredientFactoryFunction
   ])
+  .factory("MeasurementsFactory", [
+   "$resource",
+   MeasurementsFactoryFunction
+  ])
   .controller("CategoryController", [
     "$resource",
     "CategoryFactory",
@@ -45,6 +49,7 @@
     "CategoryFactory",
     "RecipeFactory",
     "IngredientFactory",
+    "MeasurementsFactory",
     "$stateParams",
     "$resource",
     "$state",
@@ -62,6 +67,7 @@
     "CategoryFactory",
     "RecipeFactory",
     "IngredientFactory",
+    "MeasurementsFactory",
     "$stateParams",
     "$resource",
     "$state",
@@ -325,7 +331,19 @@
       });
     }
   }
-  function RecipeShowControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, $stateParams, $resource, $state){
+
+    function MeasurementsFactoryFunction() {
+      return {
+          query: function() {
+
+              // Return Hard-coded data
+              return ["C", "Tb", "tsp", "oz", "stick(s)", "piece(s)", "head", "whole"];
+          }
+      }
+  };
+
+
+  function RecipeShowControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, MeasurementsFactory, $stateParams, $resource, $state){
     console.log("in the recipe show controller")
     var vm = this;
     console.log("vm "+vm[0])
@@ -349,6 +367,8 @@
     var Ingredient = $resource("/ingredients/:id.json", {}, {
         update: {method: "PUT"}
       });
+      vm.measurements = MeasurementsFactory.query();
+      console.log("VM MEASUREMTS "+vm.measurements)
 
       vm.update = function(ing){
         console.log("UPDATEINGREDIENT"+JSON.stringify(ing))
@@ -380,7 +400,7 @@
     //   vm.recipe.splice(id: $stateParams.id, 1)
     // }
     vm.new_ingredient = new IngredientFactory(); //{category_id: $stateParams.id});
-    console.log("ID"+$stateParams.id)
+      console.log("ID"+$stateParams.id)
     console.log("IDr"+$stateParams.recipe_id)
     console.log("NEW INGREDIENT "+JSON.stringify(vm.new_ingredient))
      vm.create = function(){
@@ -391,6 +411,7 @@
         if(response.success) vm.new_ingredient.push(response);
            vm.new_ingredient = new IngredientFactory();
          })
+           console.log("VM MEASUREMTS "+vm.measurements)
      console.log("NEWINGREDIENT 2 "+JSON.stringify(vm.new_ingredient))
      vm.ingredients.push(angular.copy(vm.new_ingredient))
      console.log("VM.INGREDIENTS "+JSON.stringify(vm.ingredients))
@@ -404,7 +425,7 @@
   }
 
 
-  function RecipeEditControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, $stateParams, $resource, $state){
+  function RecipeEditControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, MeasurementsFactory, $stateParams, $resource, $state){
       console.log("in the recipe edit controller")
       var vm = this;
       console.log("vm "+vm[0])
@@ -415,6 +436,10 @@
       //   vm.category = category
       //   console.log("category"+category)
       // })
+      CategoryFactory.get({id: $stateParams.category_id}).$promise.then(function(category) {
+        vm.category = category
+        console.log("category"+category)
+      })
       RecipeFactory.get({category_id: $stateParams.category_id, id: $stateParams.id }).$promise.then(function(recipe) {
         vm.recipe = recipe
         console.log("category"+JSON.stringify(recipe))
@@ -425,6 +450,9 @@
       var Ingredient = $resource("/ingredients/:id.json", {}, {
           update: {method: "PUT"}
         });
+
+      vm.measurements = MeasurementsFactory.query();
+      console.log("VM MEASUREMTS EDIT"+vm.measurements)
 
 
       vm.updateRecipe = function(recipe){

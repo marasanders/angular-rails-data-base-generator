@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <main>
     <!-- <div>{{vm}}</div> -->
-<header class = "jumbotron" id = "catheader" ng-style="{'background-image': 'url(' + vm.recipe.photo_url+ ')'}">
+<header class = "jumbotron" id = "catheader" ng-style="{'background-image': 'url(' + vm.recipe.photo_url+ '), url('+ vm.category.image_url+ ')'}">
   <h1><strong>{{vm.recipe.title}}</strong></h1>
 </header>
 
@@ -30,8 +30,12 @@
              <button data-ui-sref="categoryShow({id: vm.recipe.category_id})" class="btn updatebtn">Go Back</button>
              <button data-ui-sref="recipeShow({id: vm.recipe.id, category_id: vm.recipe.category_id})" class="btn createbtn">View Recipe</button>
              <!-- <span ng-show="ingredients.showAdd"> -->
-               <input type="text" ng-model="vm.new_ingredient.component" placeholder="Enter Ingredient" >
                <input type="text" ng-model="vm.new_ingredient.amount" placeholder="Enter Amount" >
+               <label for="vm.ingredient.measurement" class="light_label">Measurment</label>
+               <select ng-model="vm.new_ingredient.measurement" class="dropdown" >
+                   <option ng-repeat="measurement in vm.measurements" value="{{measurement}}">{{measurement}}</option>
+               </select>
+               <input type="text" ng-model="vm.new_ingredient.component" placeholder="Enter Ingredient" >
                <!-- <input type="radio" name="gender" ng-model="user.gender" ng-value="otherGender">{{otherGender}} -->
                <button class="createbtn" data-ng-click="vm.create()">Create Ingredient</button>
                <!-- <button class="deletebtn" data-ng-click="recipe.showAdd = !recipe.showAdd"; "ingredients.showAdd = !ingredients.showAdd">All Done</button> -->
@@ -57,7 +61,9 @@
                       <label for="vm.ingredient.amount">Amount</label>
                       <input type="text" ng-model="ingredient.amount">
                       <label for="vm.ingredient.measurement">Measurment</label>
-                      <input type="text" ng-model="ingredient.measurement">
+                      <select ng-model="vm.ingredient.measurement" class="dropdown">
+                          <option ng-repeat="measurement in vm.measurements" value="{{measurement}}">{{measurement}}</option>
+                      </select>
                       <label for="vm.ingredient.component">Ingredient</label>
                       <input type="text" ng-model="ingredient.component">
                       <button class="btn editbtn" ng-click="vm.updateIngredient(ingredient); ingredient.showEdit = !ingredient.showEdit ">Update {{ingredient.showEdit}}</button>
