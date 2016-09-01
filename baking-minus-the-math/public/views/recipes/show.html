@@ -20,7 +20,12 @@
         <td tabindex="1">{{ingredient.amount}} {{ingredient.measurement}} {{ingredient.component}}
         <span class="btn-group pull-right row">
           <span class="col-md-3">
-            <button ng-click="ingredient.showEdit = !ingredient.showEdit" class="btn editbtn">  Edit </button>
+            <span ng-hide="ingredient.showButton">
+              <button ng-click="ingredient.showEdit = !ingredient.showEdit; ingredient.showButton = !ingredient.showButton" class="btn editbtn">  Edit</button>
+            </span>
+            <span ng-show="ingredient.showButton">
+              <button ng-click="ingredient.showEdit = !ingredient.showEdit; ingredient.showButton = !ingredient.showButton"  class="btn editbtn">  Cancel </button>
+            </span>
           </span>
           <span class="col-md-1"></span>
           <span class="col-md-3">
@@ -46,8 +51,14 @@
     <div>
       {{vm.recipe.instructions}}
     </div>
-    <span>
-     <button data-ui-sref="categoryShow({id: vm.recipe.category_id})" class="btn updatebtn">Back</button>    <button ng-click="ingredients.showAdd = !ingredients.showAdd" class="btn createbtn">  Add New Ingredient </button>
+    <span class="navButtons">
+     <button data-ui-sref="categoryShow({id: vm.recipe.category_id})" class="btn updatebtn">Back</button>
+     <span ng-hide="new_ingredient.showButton">
+       <button ng-click="ingredients.showAdd = !ingredients.showAdd;  new_ingredient.showButton = !new_ingredient.showButton" class="btn createbtn">  Add New Ingredient</button>
+     </span>
+     <span ng-show="new_ingredient.showButton">
+       <button ng-click="ingredients.showAdd = !ingredients.showAdd;  new_ingredient.showButton = !new_ingredient.showButton"  class="btn createbtn">  Cancel Add</button>
+     </span>
    </span>
         <span ng-show="ingredients.showAdd">
           <input type="text" ng-model="vm.new_ingredient.component" placeholder="Enter Ingredient" >
@@ -56,9 +67,7 @@
               <option ng-repeat="measurement in vm.measurements" value="{{measurement}}">{{measurement}}</option>
           </select>
           <input type="text" ng-model="vm.new_ingredient.amount" placeholder="Enter Amount" >
-          <!-- <input type="radio" name="gender" ng-model="user.gender" ng-value="otherGender">{{otherGender}} -->
-          <!-- <button class="createbtn" data-ng-click="vm.create()">Add Ingredient</button> -->
-          <button class="createbtn" data-ng-click="vm.create(); ingredients.showAdd = !ingredients.showAdd">Add Ingredient</button>
+          <button class="createbtn" data-ng-click="vm.create(); ingredients.showAdd = !ingredients.showAdd">Create New Ingredient</button>
        </span>
   </main>
 </div>
