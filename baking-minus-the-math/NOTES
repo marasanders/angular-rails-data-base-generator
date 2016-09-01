@@ -2,601 +2,454 @@ https://ndb.nal.usda.gov/ndb/foods/show/1?fgcd=&manu=&lfacet=&format=&count=&max
 
 https://github.com/angular-ui/ui-router/wiki#state-change-events
 
-vm.new_category = {};
-vm.create = function(){
-  vm.category_data.push(angular.copy(vm.new_category));
-  vm.new_category = {}
-  Category.save(vm.new_category, function(response){
-    vm.category_data.push(response)
-    vm.new_category = {}
-  })
-}
+"use strict";
 
+(function(){
+  angular
+  .module("luv2cook", [
+    "ui.router",
+    "ngResource",
+    "categories"
+  ])
+  .config([
+    "$stateProvider",
+    "$locationProvider",
+    RouterFunction
+  ])
+  .factory("CategoryFactory", [
+    "$resource",
+    CategoryFactoryFunction
+  ])
+  .factory("RecipeFactory", [
+    "$resource",
+    RecipeFactoryFunction
+  ])
+  .factory("IngredientFactory", [
+    "$resource",
+    IngredientFactoryFunction
+  ])
+  .factory("MeasurementsFactory", [
+   "$resource",
+   MeasurementsFactoryFunction
+  ])
+  .controller("CategoryIndexController", [
+    "$resource",
+    "CategoryFactory",
+    "$http",
+    "$state",
+    CategoryIndexController
+  ])
+  .controller("CategoryShowController", [
+    "CategoryFactory",
+    "RecipeFactory",
+    "IngredientFactory",
+    "$stateParams",
+    "$resource",
+    "$state",
+    CategoryShowControllerFunction
+  ])
+  .controller("RecipeIndexController", [
+    "$resource",
+    "RecipeFactory",
+    RecipeIndexController
+  ])
+  .controller("RecipeShowController", [
+    "CategoryFactory",
+    "RecipeFactory",
+    "IngredientFactory",
+    "MeasurementsFactory",
+    "$stateParams",
+    "$resource",
+    "$state",
+    RecipeShowControllerFunction
+  ])
+  .controller("RecipeEditController", [
+    "CategoryFactory",
+    "RecipeFactory",
+    "IngredientFactory",
+    "MeasurementsFactory",
+    "$stateParams",
+    "$resource",
+    "$state",
+    RecipeEditControllerFunction
+  ]);
 
-vm.new_category = new CategoryFactory();
- vm.create = function(){
-   if (vm.new_category.Cat_name){
-  //  console.log("category"+vm.new_category.Cat_name)
-      vm.new_category.$save(function(response){
-  // console.log("response "+response)
-        if(response.success) vm.catgory_data.push(response);
-        vm.new_catgory = new CategoryFactory();
+    function RouterFunction($stateProvider, $locationProvider){
+      // $locationProvider.html5Mode(true);
+      $stateProvider
+      .state("categoryIndex", {
+        url: "",
+        templateUrl: "/views/categories/index.html",
+        controller: "CategoryIndexController",
+        controllerAs: "vm"
       })
-      vm.category_data.push(angular.copy(vm.new_category));
-   } else {
-     alert("Category can not be blank!!");
-   }
-   vm.new_category = {};
- }
-
-
-
-
-
-
-function CategoryShowControllerFunction(CategoryFactory, RecipeFactory, $stateParams, $resource){
-  console.log("in the category show controller")
-  var vm = this;
-  var Recipe = $resource("/recipes/:id.json", {}, {
+      .state("categoryShow", {
+        url: "/:id",
+        templateUrl: "/views/categories/show.html",
+        controller: "CategoryShowController",
+        controllerAs: "vm"
+      })
+      .state("recipeIndex", {
+        url: "/recipes",
+        templateUrl: "recipes/index.html.erb",
+        controller: "RecipeIndexController",
+        controllerAs: "RecipeIndexViewModel"
+      })
+      .state("recipeEdit", {
+        url: "/category/:category_id/recipes/:id/edit",
+        templateUrl: "/views/recipes/edit.html",
+        controller: "RecipeEditController",
+        controllerAs: "vm"
+      })
+      .state("recipeShow", {
+        url: "/category/:category_id/recipes/:id",
+        templateUrl: "/views/recipes/show.html",
+        controller: "RecipeShowController",
+        controllerAs: "vm"
+      })
+  }
+//Index all the Categories
+  function CategoryIndexController($resource, CategoryFactory, $http, $state){
+    var vm = this;
+    vm.category_data = {}
+//Get categories from the database
+    var Category = $resource("/categories/:id.json", {}, {
       update: {method: "PUT"}
     });
-  console.log("vm "+vm[0])
-  console.log("state params "+$stateParams)
-  console.log("resource "+$resource)
-  console.log("id"+$stateParams.id)
-  CategoryFactory.get({id: $stateParams.id}).$promise.then(function(category) {
-    vm.category = category
-    console.log("category"+JSON.stringify(category))
-  })
-  // vm.recipes = RecipeFactory.query({category_id: $stateParams.id})
-  // console.log("recipe "+ vm.recipes)
-  //   // this.update = function(category){
-  //   //   category.$update(category);
-  //   // }
+    vm.category_data = CategoryFactory.query();
 
-  RecipeFactory.query({category_id: $stateParams.id}).$promise.then(function(recipes){
-    vm.recipes = recipes
-    console.log("recipe "+JSON.stringify(recipes))
-    // this.update = function(category){
-    //   category.$update(category);
-    // }
-  })
-
-    vm.update = function(recipe){
-      console.log("recipe update recipe"+ recipe)
-      Recipe.update({id: recipe.id}, recipe, function(response){
-        console.log ("Recipe Update response "+response)
-      })
+//Delete a Category
+    vm.destroy = function(cat){
+      console.log("index"+JSON.stringify(cat))
+      Category.remove({id: cat.id}, function(response){
+        if(response.success) vm.category_data.splice(vm.category_data.indexOf(cat), 1);
+      });
     }
 
+//Create a Category throw an error if name is blank
+       vm.new_category = new CategoryFactory();
+       vm.create = function(){
+          if (vm.new_category.Cat_name){
+             Category.save(vm.new_category, function(response){
+               if(response.success) vm.catgory_data.push(response);
+               vm.new_catgory = new CategoryFactory();
+             })
+             vm.category_data.push(angular.copy(vm.new_category));
+          }else{
+             alert("Category can not be blank!!");
+          }
+          vm.new_category = {};
+       }
+
+//Edit Category
+    vm.update = function(category){
+      Category.update({id: category.id}, category, function(response){
+        category.showEdit = !category.showEdit
+      });
+    }
+  }
+
+  function CategoryFactoryFunction($resource) {
+    return $resource("/categories/:id.json", {}, {
+      update: {method: "PUT"}
+    });
+  }
 
 
-      vm.destroy = function(recipe_index){
-        console.log("id "+$stateParams.id)
-        console.log("index "+vm.recipes[recipe_index])
-        var recipe = vm.recipes[recipe_index]
-        Recipe.remove({id: recipe.id})
-        vm.recipes.splice(recipe_index, 1)
+  function CategoryShowControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, $stateParams, $resource, $state){
+    console.log("in the category show controller")
+    var vm = this;
+    var Recipe = $resource("/recipes/:id.json", {}, {
+        update: {method: "PUT"}
+      });
+    console.log("vm "+vm[0])
+    console.log("state params "+$stateParams)
+    console.log("resource "+$resource)
+    console.log("id"+$stateParams.id)
+    CategoryFactory.get({id: $stateParams.id}).$promise.then(function(category) {
+      vm.category = category
+      console.log("category"+JSON.stringify(category))
+    })
+    // vm.recipes = RecipeFactory.query({category_id: $stateParams.id})
+    // console.log("recipe "+ vm.recipes)
+    //   // this.update = function(category){
+    //   //   category.$update(category);
+    //   // }
 
+    RecipeFactory.query({category_id: $stateParams.id}).$promise.then(function(recipes){
+      vm.recipes = recipes
+      console.log("recipe "+JSON.stringify(recipes))
+      // this.update = function(category){
+      //   category.$update(category);
+      // }
+    })
+
+
+
+      vm.update = function(recipe){
+        console.log("recipe update recipe"+ recipe)
+        Recipe.update({id: recipe.id}, recipe, function(response){
+          console.log ("Recipe Update response "+response)
+        })
       }
 
 
 
+        vm.destroy = function(recipe_index){
+          console.log("id "+$stateParams.id)
+          console.log("index "+vm.recipes[recipe_index])
+          var recipe = vm.recipes[recipe_index]
+          Recipe.remove({id: recipe.id})
+          vm.recipes.splice(recipe_index, 1)
 
-  vm.new_recipe = new RecipeFactory(); //{category_id: $stateParams.id});
-  console.log("ID"+$stateParams.id)
-  console.log("NEW RECIPE "+JSON.stringify(vm.new_recipe))
-   vm.create = function(){
-     console.log("in create function!")
-    console.log("recipe title "+vm.new_recipe)
-    vm.new_recipe.$save({category_id: $stateParams.id}, function(response){
-
-      console.log("response "+response)
-      if(response.success) vm.new_recipe.push(response);
-      vm.new_recipe = new RecipeFactory(); //{category_id: $stateParams.id});
-      console.log("ID"+$stateParams.id)
-      console.log("NEW RECIPE "+vm.new_recipe)
-  })
-     vm.recipes.push(angular.copy(vm.new_recipe));
-     vm.new_recipe = {};
-    //  recipe.showAdd = !recipe.showAdd
-   }
-   vm.new_ingredient = new IngredientFactory(); //{category_id: $stateParams.id});
-
-   console.log("ID"+$stateParams.id)
-   console.log("NEW RECIPE "+JSON.stringify(vm.new_ingredient))
-    vm.ingredients.create = function(){
-      console.log("in create ingredient function!")
-     console.log("recipe componenet "+vm.new_ingredient)
-     vm.new_ingredient.$save({id: $stateParams.id}, function(response){
-
-       console.log("response "+response)
-       if(response.success) vm.new_recipe.push(response);
-       vm.new_ingredient = new RecipeFactory(); //{category_id: $stateParams.id});
-       console.log("ID"+$stateParams.id)
-       console.log("NEW RECIPE "+vm.new_ingredient)
-   })
-      vm.ingredients.push(angular.copy(vm.new_ingredient));
-      vm.new_ingredient = {};
-     //  recipe.showAdd = !recipe.showAdd
-    }
-
-
-<div class="container-fluid">
-  <main>
-    <!-- <div>{{vm}}</div> -->
-<header class = "jumbotron" id = "catheader" ng-style="{'background-image': 'url(' + vm.category.image_url+ ')'}">
-  <h1><strong>{{vm.category.Cat_name}}</strong></h1>
-</header>
-
-<h1>Recipes</h1>
-
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <div></div>
-      <!-- <th>{{vm.recipes}}</th> -->
-      <th colspan="3"></th>
-        <tr data-ng-repeat="recipe in vm.recipes">
-          <td>{{$index + 1}}.
-            <span ng-hide="recipe.showAdd">
-              <a data-ui-sref="recipeShow({id: recipe.id, category_id: vm.category.id})" tabindex="1" class="large_blue">{{recipe.title}}</a>
-                <span class="btn-group pull-right row">
-                  <span class="col-md-3">
-                    <button ng-click="recipe.showEdit = !recipe.showEdit" class="btn editbtn">  Edit </button>
-                  </span>
-                  <span class="col-md-1"></span>
-                    <span class="col-md-3">
-                     <button class="btn deletebtn" data-ng-click="vm.destroy($index)">Delete</button>
-                    </span>
-                  </span>
-                </span>
-              </span>
-
-          </td>
-        <!-- <td>{{$index + 1}}. <a data-ng-href="{{recipe.title}}" tabindex="1" class="large_blue">{{recipe.title}}</a></td> -->
-       </tr>
-     </tr>
-     <tr>
-       <td>
-         <!-- <input type="text" data-ng-model="vm.new_recipe.title" placeholder="Enter New Recipe" /><sp> </sp><button class="createbtn" data-ng-click="vm.create()">Create</button> -->
-         <button ng-click="recipe.showAdd = !recipe.showAdd" class="btn createbtn">  Add New Recipe </button>
-         <form ng-show="recipe.showAdd" ng-submit="vm.create()" novalidate>
-           <input type="text" ng-model="vm.new_recipe.title" placeholder="Recipe Title" >
-           <input type="text" ng-model="vm.new_recipe.servings" placeholder="Servings 000.00" >
-           <input type="text" ng-model="vm.new_recipe.calories" placeholder="Calories Per Serving 0000.00" >
-           <input type="text" ng-model="vm.new_recipe.ratings" placeholder="Ratings 00.00" >
-           <input type="text" ng-model="vm.new_recipe.photo_url" placeholder="Https Link to Photo" >
-           <input class="form-control input-lg" id="inputlg" type="text" ng-model="vm.new_recipe.instructions" placeholder="Instructions" >
-           <!-- <input type="text" ng-model="vm.new_recipe.category_id" ng-value="vm.new_recipe.category_id" placeholder={{vm.category.id}}><span>enter category ID for {{vm.category.Cat_name}} as shown</span> -->
-           <!-- <input type="text" ng-model="vm.new_recipe.category_id" ng-init=recipe.category_id={{vm.category.category_id}}> -->
-           <!-- <input type="radio" name="gender" ng-model="user.gender" ng-value="otherGender">{{otherGender}} -->
-           <!-- <button class="createbtn" data-ng-click="vm.create()">Create</button> -->
-          <button class="createbtn">Create</button> -->
-          <span     recipe.showAdd = !recipe.showAdd></span>
-
-        </form>
-       </td>
-     </tr>
-   </thead>
-  </table>
-</main>
-</div>
+        }
 
 
 
-
-<div class="container-fluid">
-  <main>
-    <!-- <div>{{vm}}</div> -->
-<header class = "jumbotron" id = "catheader" ng-style="{'background-image': 'url(' + vm.category.image_url+ ')'}">
-  <h1><strong>{{vm.category.Cat_name}}</strong></h1>
-</header>
-
-<h1>Recipes</h1>
-
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <div></div>
-      <!-- <th>{{vm.recipes}}</th> -->
-      <th colspan="3"></th>
-        <tr data-ng-repeat="recipe in vm.recipes">
-          <td>{{$index + 1}}.
-            <span ng-hide="recipe.showAdd">
-              <a data-ui-sref="recipeShow({id: recipe.id, category_id: vm.category.id})" tabindex="1" class="large_blue">{{recipe.title}}</a>
-                <span class="btn-group pull-right row">
-                  <span class="col-md-3">
-                    <button ng-click="recipe.showEdit = !recipe.showEdit" class="btn editbtn">  Edit </button>
-                  </span>
-                  <span class="col-md-1"></span>
-                    <span class="col-md-3">
-                     <button class="btn deletebtn" data-ng-click="vm.destroy($index)">Delete</button>
-                    </span>
-                  </span>
-                </span>
-              </span>
-
-          </td>
-        <!-- <td>{{$index + 1}}. <a data-ng-href="{{recipe.title}}" tabindex="1" class="large_blue">{{recipe.title}}</a></td> -->
-       </tr>
-     </tr>
-     <tr>
-       <td>
-         <!-- <input type="text" data-ng-model="vm.new_recipe.title" placeholder="Enter New Recipe" /><sp> </sp><button class="createbtn" data-ng-click="vm.create()">Create</button> -->
-         <button ng-click="recipe.showAdd = !recipe.showAdd" class="btn createbtn">  Add New Recipe </button>
-         <span ng-show="recipe.showAdd">
-           <input type="text" ng-model="vm.new_recipe.title" placeholder="Recipe Title" >
-           <input type="text" ng-model="vm.new_recipe.servings" placeholder="Servings 000.00" >
-           <input type="text" ng-model="vm.new_recipe.calories" placeholder="Calories Per Serving 0000.00" >
-           <input type="text" ng-model="vm.new_recipe.ratings" placeholder="Ratings 00.00" >
-           <input type="text" ng-model="vm.new_recipe.photo_url" placeholder="Https Link to Photo" >
-           <input class="form-control input-lg" id="inputlg" type="text" ng-model="vm.new_recipe.instructions" placeholder="Instructions" >
-           <!-- <input type="text" ng-model="vm.new_recipe.category_id" ng-value="vm.new_recipe.category_id" placeholder={{vm.category.id}}><span>enter category ID for {{vm.category.Cat_name}} as shown</span> -->
-           <!-- <input type="text" ng-model="vm.new_recipe.category_id" ng-init=recipe.category_id={{vm.category.category_id}}> -->
-           <!-- <input type="radio" name="gender" ng-model="user.gender" ng-value="otherGender">{{otherGender}} -->
-           <button class="createbtn" data-ng-click="vm.create()">Create</button>
-           <span recipe.showAdd = !recipe.showAdd>
-
-        </span>
-       </td>
-     </tr>
-   </thead>
-  </table>
-</main>
-</div>
-
-
-function CategoryShowControllerFunction(CategoryFactory, RecipeFactory, $stateParams, $resource){
-  console.log("in the category show controller")
-  var vm = this
-  var Recipe = $resource("/catergory/:id.json", {}, {
+//Add a new recipe must reload vm.recipes through recipe factory after add update with new Ingredient ID
+    vm.new_recipe = new RecipeFactory(); //{category_id: $stateParams.id});
+    console.log("ID"+$stateParams.id)
+    console.log("NEW RECIPE "+JSON.stringify(vm.new_recipe))
+//Create new recipe
+     vm.create = function(){
+       console.log("in create function!")
+      console.log("recipe title "+vm.new_recipe.title)
+//Recipe must have a title
+        if (vm.new_recipe.title) {
+// Add new Recipe to database
+           vm.new_recipe.$save({category_id: $stateParams.id}, function(response){
+           console.log("IN SAVE NEW")
+           console.log("response "+response)
+// New Recipe Id is not Accessible - update vm.recipes so it contains the new recipe
+           RecipeFactory.query({category_id: $stateParams.id}).$promise.then(function(recipes){
+             vm.recipes = recipes
+             console.log("recipes after add "+JSON.stringify(recipes))
+            //  var sortedData= array .sort((function (a, b) {
+            //                   return new Date(b.date) - new Date(a.date)
+            //                 }));
+// Take the Recipes and Sort them by Date so the Newest Recipe is Last - capture the new newRecipe in newRecipes sorted array
+             var newRecipes = recipes.sort(function(a,b){return new Date(a.created_at) - new Date(b.created_at)});
+             var newRecipe = {}
+             newRecipe = newRecipes[recipes.length - 1]
+             console.log("recipe id"+JSON.stringify(newRecipe))
+             console.log("SORTED RECIPES"+JSON.stringify(newRecipes))
+// Now that we know the ID of the newly created recipe we can add ingredients which contain the foreign key recipe_id - redirect to edit where you can add update delete ingredients
+             $state.go("recipeEdit", {id: newRecipe.id, category_id: $stateParams.id}, {reload: true})
+           })
+//  if(response.success) vm.recipes.push(response) - update angular table to reflect new recipe on screen
+           vm.new_recipe = new RecipeFactory(); //{category_id: $stateParams.id});
+           console.log("ID"+$stateParams.id)
+           console.log("NEW RECIPE "+vm.new_recipe)
+         })
+         vm.recipes.push(angular.copy(vm.new_recipe));
+       } else {
+         alert("Recipe name can not be blank!!");
+       }
+         vm.new_recipe = {};
+         vm.ingredients = {}
+       }
+  }
+  function RecipeFactoryFunction($resource) {
+    // console.log()
+    // return $resource("/categories/" + $stateParams.id + "/recipes/:id.json", {}, {
+    return $resource("/categories/:category_id/recipes/:id.json", {}, {
       update: {method: "PUT"}
     });
-    // console.log("RECIPE"+Recipe)
-    console.log("This is RECIPE:  "+JSON.stringify(Recipe))
-  vm.recipes_data = RecipeFactory.query();
-  console.log("vm "+vm.recipes_data)
-  console.log("this "+this)
-  console.log("id"+$stateParams.id)
-  CategoryFactory.get({id: $stateParams.id}).$promise.then(function(category) {
-    vm.category = category
-    console.log("category"+category)
-  })
-  vm.recipes = RecipeFactory.query({category_id: $stateParams.id})
-  console.log("This is RECIPE:  "+JSON.stringify(vm.recipes))
-  this.update = function(category){
-    category.$update(category);
   }
 
-  vm.destroy = function(recipe_index){
-    console.log("id "+$stateParams.id)
-    console.log("index "+vm.recipes[recipe_index])
-    var recipe = vm.recipes[recipe_index]
-    // Recipe.remove({id: recipe.id}), function(response){
-    //         console.log("response"+response)
-    //   if(response.success) vm.recipes.splice(recipe_index, 1)
-    Recipe.remove({id: recipe.id}), function(response){
-      if(response.success) vm.recipes_data.splice({recipe_index, 1)
+
+  // function CreateRecipeFactoryFunction($resource) {
+  //   // console.log()
+  //   return $resource("/categories/" + $stateParams.id + "/recipes/:id.json", {}, {
+  //     update: {method: "PUT"}
+  //   });
+  // }
+
+  function RecipeIndexController($resource, RecipeFactory){
+    var vm = this;
+    var Recipe = $resource("/recipes/:id.json", {}, {
+      update: {method: "PUT"}
+    });
+    vm.recipe_data = Recipe.query()
+    console.log("recipe-data "+vm.recipe_data)
+
+
+    vm.sort_recipe_data_by = function(name){
+      vm.sort_on = name;
+      vm.is_descending = !(vm.is_descending);
+    }
+
+    // vm.destroy = function(recipe_index){
+    //   var recipe = vm.recipe_data[recipe_index];
+    //   Recipe.remove(recipe_index, function(response){
+    //     if(response.success) vm.recipe_data.splice(recipe_index, 1);
+    //   });
+  //  }
+
+    vm.update = function(recipe){
+      Recipe.update({id: recipe.id}, recipe, function(response){
+        console.log("Recipe updated!");
+      });
     }
   }
-  // this.destroy = function(category){
-  //   CategoryFactory.remove(category);
-  //   this.category.splice(category, 1)
-  // }
-}
+
+    function MeasurementsFactoryFunction() {
+      return {
+          query: function() {
+
+              // Return Hard-coded data
+              return ["C", "Tb", "tsp", "oz", "stick(s)", "piece(s)", "head", "whole"];
+          }
+      }
+  };
 
 
+  function RecipeShowControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, MeasurementsFactory, $stateParams, $resource, $state){
+    console.log("in the recipe show controller")
+    var vm = this;
+    console.log("vm "+vm[0])
+    console.log("this "+this)
+    console.log("cat id"+$stateParams.category_id)
+    console.log("id"+$stateParams.id)
+    CategoryFactory.get({id: $stateParams.category_id}).$promise.then(function(category) {
+      vm.category = category
+      console.log("category"+category)
+    })
+    RecipeFactory.get({category_id: $stateParams.category_id, id: $stateParams.id }).$promise.then(function(recipe) {
+      vm.recipe = recipe
+      console.log("category"+recipe)
+    })
+    // IngredientFactory.query({recipe_id: $stateParams.id}).$promise.then(function(ingredients){
+    //   vm.ingredients = ingredients
+    //   console.log("recipe "+JSON.stringify(ingredients)
+    // console.log("ingredients "+vm.ingredients)
+    vm.ingredients = IngredientFactory.query({recipe_id: $stateParams.id})
+    console.log("ingredients "+vm.ingredients)
+    var Ingredient = $resource("/ingredients/:id.json", {}, {
+        update: {method: "PUT"}
+      });
+      vm.measurements = MeasurementsFactory.query();
+      console.log("VM MEASUREMTS "+vm.measurements)
 
-//   vm.destroy = function(recipe_index){
-//     console.log("catid "+category_id: $stateParams.category_id), id: $stateParams.id, recipe_index)
-//     console.log("id "+id: $stateParams.id)
-//     console.log("index "+recipe_index)
-//     RecipeFactory.remove(category_id: $stateParams.category_id, id: $stateParams.id);
-//     vm.recipe.splice(recipe_index, 1)
-//   }
+      vm.update = function(ing){
+        console.log("UPDATEINGREDIENT"+JSON.stringify(ing))
+        Ingredient.update({id: ing.id}, ing, function(response){
+          // ingredient.showEdit = !ingredient.showEdit
+        });
+        console.log("cat id"+$stateParams.category_id)
+        console.log("recipe id"+ing.recipe_id)
+      }
 
-
-// .state("recipeNew", {
-//   url: "/recipes/new",
-//   templateUrl: "recipes/new.html.erb",
-//   controller: "recipe_new_controller",
-//   controllerAs: "RecipeNewViewModel"
-// })
-// .state("recipeEdit", {
-//   url: "/recipes/:id/edit",
-//   templateUrl: "recipes/edit.html.erb",
-//   controller: "RecipeEditController",
-//   controllerAs: "RecipeEditViewModel"
-// })
-// .state("recipeShow", {
-//   url: "/recipes/:id",
-//   templateUrl: "recipes/show.html.erb",
-//   controller: "RecipeShowController",
-//   controllerAs: "RecipeShowViewModel"
-// })
-// .state("ingredientIndex", {
-//   url: "/ingredients",
-//   templateUrl: "ingredients/index.html.erb",
-//   controller: "ingredient_controller",
-//   controllerAs: "IngredientIndexViewModel"
-// })
-// .state("ingredientEdit", {
-//   url: "/ingredients/:id/edit",
-//   templateUrl: "ingredients/edit.html.erb",
-//   controller: "IngredientEditController",
-//   controllerAs: "IngredientEditViewModel"
-// })
-// .state("ingredientShow", {
-//   url: "/ingredients/:id",
-//   templateUrl: "ingredients/show.html.erb",
-//   controller: "IngredientShowController",
-//   controllerAs: "IngredientShowViewModel"
-// });
+    vm.destroy = function(ing){
+      console.log("index"+JSON.stringify(ing))
+      Ingredient.remove({id: ing.id}, function(response){
+        if(response.success) vm.ingredients.splice(vm.ingredients.indexOf(ing), 1);
+      });
+    }
 
 
+    vm.new_ingredient = new IngredientFactory(); //{category_id: $stateParams.id});
+      console.log("ID"+$stateParams.id)
+    console.log("IDr"+$stateParams.recipe_id)
+    console.log("NEW INGREDIENT "+JSON.stringify(vm.new_ingredient))
+     vm.create = function(){
+     console.log("NEWINGREDIENT "+JSON.stringify(vm.new_ingredient.component))
+        vm.new_ingredient.$save({recipe_id: $stateParams.id}, function(response){
+        vm.ingredients = IngredientFactory.query({recipe_id: $stateParams.id})
+       console.log("RESPONSE "+JSON.stringify(response))
+        if(response.success) vm.new_ingredient.push(response);
+           vm.new_ingredient = new IngredientFactory();
+         })
+           console.log("VM MEASUREMTS "+vm.measurements)
+     console.log("NEWINGREDIENT 2 "+JSON.stringify(vm.new_ingredient))
+     vm.ingredients.push(angular.copy(vm.new_ingredient))
+     console.log("VM.INGREDIENTS "+JSON.stringify(vm.ingredients))
+     vm.new_ingredient = {}
+    }
+  }
+  function IngredientFactoryFunction($resource) {
+    return $resource("/recipes/:recipe_id/ingredients/:id.json", {}, {
+      update: {method: "PUT"}
+    })
+  }
 
 
+  function RecipeEditControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, MeasurementsFactory, $stateParams, $resource, $state){
+      console.log("in the recipe edit controller")
+      var vm = this;
+      console.log("vm "+vm[0])
+      console.log("this "+this)
+      console.log("cat id"+$stateParams.category_id)
+      console.log("id"+$stateParams.id)
+      // CategoryFactory.get({category_id: $stateParams.category_id}).$promise.then(function(category) {
+      //   vm.category = category
+      //   console.log("category"+category)
+      // })
+      CategoryFactory.get({id: $stateParams.category_id}).$promise.then(function(category) {
+        vm.category = category
+        console.log("category"+category)
+      })
+      RecipeFactory.get({category_id: $stateParams.category_id, id: $stateParams.id }).$promise.then(function(recipe) {
+        vm.recipe = recipe
+        console.log("category"+JSON.stringify(recipe))
+      })
+
+      vm.ingredients = IngredientFactory.query({recipe_id: $stateParams.id})
+      console.log("ingredients "+vm.ingredients)
+      var Ingredient = $resource("/ingredients/:id.json", {}, {
+          update: {method: "PUT"}
+        });
+
+      vm.measurements = MeasurementsFactory.query();
+      console.log("VM MEASUREMTS EDIT"+vm.measurements)
 
 
+      vm.updateRecipe = function(recipe){
+        console.log(" update ID"+JSON.stringify($stateParams.id))
+        console.log(" update catID"+JSON.stringify($stateParams.category_id))
+
+        vm.recipe.$update({category_id: $stateParams.category_id, id: $stateParams.id}), function(response){
+          console.log("updated")
+
+        }
+      }
+
+        vm.new_ingredient = new IngredientFactory(); //{category_id: $stateParams.id});
+        console.log("ID"+$stateParams.id)
+        console.log("IDr"+$stateParams.recipe_id)
+        console.log("NEW INGREDIENT "+JSON.stringify(vm.new_ingredient))
+         vm.create = function(){
+         console.log("NEWINGREDIENT "+JSON.stringify(vm.new_ingredient.component))
+            vm.new_ingredient.$save({recipe_id: $stateParams.id}, function(response){
+           vm.ingredients = IngredientFactory.query({recipe_id: $stateParams.id})
+           console.log("RESPONSE "+JSON.stringify(response))
+            if(response.success) vm.new_ingredient.push(response);
+               vm.new_ingredient = new IngredientFactory();
+             })
+         console.log("NEWINGREDIENT 2 "+JSON.stringify(vm.new_ingredient))
+         vm.ingredients.push(angular.copy(vm.new_ingredient))
+         console.log("VM.INGREDIENTS "+JSON.stringify(vm.ingredients))
+         vm.new_ingredient = {}
+        }
 
 
+        vm.updateIngredient = function(ing){
+          console.log("UPDATEINGREDIENT"+JSON.stringify(ing))
+          Ingredient.update({id: ing.id}, ing, function(response){
+            // ingredient.showEdit = !ingredient.showEdit
+          });
+          console.log("cat id"+$stateParams.category_id)
+          console.log("recipe id"+ing.recipe_id)
+        }
+
+      vm.destroy = function(ing){
+        console.log("index"+JSON.stringify(ing))
+        Ingredient.remove({id: ing.id}, function(response){
+          if(response.success) vm.ingredients.splice(vm.ingredients.indexOf(ing), 1);
+        })
+      }
+
+ }
 
 
-
-
-
-
-
-
-
-
-
-Had the same problem, to get more info about the error call the bootstrap function with {debugInfoEnabled: true} like so:
-angular.bootstrap(document.getElementById('app-root'), ['MyApp'], {debugInfoEnabled: true});
-
-This will print out to the console what's the underlining module that fails to instantiate.
-
-
-
-
-
-
-
-
-app.js              => app/assets/javascripts/products.js
-index.html          => app/views/products/index.html.erb
-data.js             => db/products_data.json
-angular.js          => vendor/assets/javascripts/angular.js
-angular-resource.js => vendor/assets/javascripts/angular-resource.js
-bootstrap.css       => vendor/assets/stylesheets/bootstrap.css
-
-remove only the require_tree line from:
-
-app/assets/stylesheets/application.css
-app/assets/javascripts/application.js
-
-******************************************show
-
-<div class="container-fluid">
-  <main data-ng-controller="CategoryShowController as vm">
-    <div>{{vm}}</div>
-<h4><strong>{{vm.category.Cat_name}}</strong></h4>
-<!-- <form data-ng-submit="CommentIndexViewModel.create()">
-  <input placeholder="Add a New Recipe" data-ng-model="CommentIndexViewModel.comment.message" />
-  <button class="btn btn-info btn-sm" type="submit">Create</button>
-</form> -->
-<h1>Recipes</h1>
-<!-- <p id="notice"><%= notice %></p> -->
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <div></div>
-      <th>{{vm.recipes}}</th>
-      <th colspan="3"></th>
-      <tr data-ng-repeat="recipe in vm.recipes">
-        <td>{{$index + 1}}. <a data-ng-href="{{recipe.title}}" tabindex="1" class="large_blue">{{recipe.title}}</a></td>
-        <!-- <td> -->
-          <!-- <img data-ng-src="{{product.image_url}}" alt="#" /> -->
-          <!-- <a data-ng-href="{{Cat_name}}" tabindex="-1">{{category.Cat_name}}</a>
-        </td> -->
-    </tr>
-      </thead>
-    </table>
-  </main>
-</div>
-
-
-********************************************************application.html.erb
-
-<!DOCTYPE html>
-<html data-ng-app="luv2cook">
-  <head>
-    <title>BakingMinusTheMath</title>
-    <%= csrf_meta_tags %>
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular-resource.min.js"></script>
-    <base href="/">
-    <!-- <%= stylesheet_link_tag "categories", property: "stylesheet" %> -->
-    <%= javascript_include_tag 'application' %>
-
-
-
-  </head>
-
-  <body>
-    <div data-ui-view></div>
-    <%= yield %>
-  </body>
-</html>
-
-*******//= require_tree .
-
-assets/views/categories/index.html.erb
-
-<!-- <%= stylesheet_link_tag "categories", property: "stylesheet" %> -->
-
-<div class="container">
-  <header class="jumbotron">
-    <h1>Categories!</h1>
-  </header>
-  <!-- <main ui-view> -->
-  <!-- <main data-ng-controller="CategoryController as vm"> -->
-    <!-- <p id="notice"><%= notice %></p> -->
-hellof{{}}
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>{{vm.category_data}}</th>
-          <th colspan="3"></th>
-          <tr data-ng-repeat="category in vm.category_data">
-            <td>{{$index + 1}}. <a data-ng-sref="categoryShow(id:{{category.id}})" tabindex="1" class="large_blue">{{category.Cat_name}}</a></td>
-            <!-- <td> -->
-              <!-- <img data-ng-src="{{product.image_url}}" alt="#" /> -->
-              <!-- <a data-ng-href="{{Cat_name}}" tabindex="-1">{{category.Cat_name}}</a>
-            </td> -->
-        </tr>
-      </thead>
-    </table>
-  </main>
-</div>
-
-<!--
-  <tbody>
-      <tr data-ng-repeat="categoryvm in vm.cat_data">
-        <td>{{categoryvm.name}}</td>
-        <td><a data-ui-sref="categoryShow({id: categoryvm.id})">Show</a></td>
-        <td><a data-ng-click="CategoryShowViewModel.update(CategoryShowViewModel.categoryvm)">Edit</a></td>
-        <td><a data-ng-click="CategoryShowViewModel.destroy(CategoryShowViewModel.categoryvm)">Delete</a></td>
-      </tr>
-  </tbody>
-</table> -->
-
-<!-- <br> -->
-<!-- <form data-ng-submit="CategoryIndexViewModel.create()">
-  <input placeholder="New Category" data-ng-model="CategoryIndexViewModel.category.name" />
-  <button class="btn btn-info btn-sm" type="submit">Create</button>
-</form>
-</main> -->
-<!-- <!DOCTYPE html>
-<html>
-  <head>
-    <title>Product List</title>
-    <link rel="stylesheet" href="bootstrap.css" />
-    <script src="angular.js"></script>
-    <script src="data.js"></script>
-    <script src="app.js"></script>
-  </head>
-  <body class="container" data-ng-app="inventory">
-    <header class="jumbotron">
-      <h1>Inventory Tracker</h1>
-    </header>
-
-    <main data-ng-controller="inventory_controller as vm">
-      <h2>Total Value: ${{vm.total_value()}}</h2>
-      <input type="text" class="form-control" placeholder="Filter on..." data-ng-model="vm.filter_on" />
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <td data-ng-click="vm.is_descending = !(vm.is_descending)">
-              <span data-ng-if="vm.is_descending">z-a</span>
-              <span data-ng-if="!vm.is_descending">a-z</span>
-            </td>
-            <th data-ng-click="vm.sort_data_by('name')">Name</th>
-            <th data-ng-click="vm.sort_data_by('cost')">Cost</th>
-            <th data-ng-click="vm.sort_data_by('quantity')">Quantity</th>
-            <th data-ng-click="vm.sort_data_by('country')">Country of Origin</th>
-            <th>Notes</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr data-ng-repeat="product in vm.data | filter: vm.filter_on | orderBy: vm.sort_on : vm.is_descending">
-            <td>{{$index + 1}}</td>
-            <td>
-              <img data-ng-src="{{product.image_url}}" alt="#" />
-              <a data-ng-href="{{product.url}}" tabindex="-1">{{product.name}}</a>
-            </td>
-            <td>${{product.cost.toFixed(2)}}</td>
-            <td>
-              <input type="number" data-ng-model="product.quantity" />
-            </td>
-            <td>{{product.country}}</td>
-            <td>
-              <input type="text" data-ng-model="product.notes" />
-            </td>
-            <td data-ng-click="vm.destroy($index)">&cross;</td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <input type="text" data-ng-model="vm.new_product.name" placeholder="Name" />
-            </td>
-            <td>
-              <input type="number" data-ng-model="vm.new_product.cost" placeholder="Cost" />
-            </td>
-            <td>
-              <input type="number" data-ng-model="vm.new_product.quantity" placeholder="0" />
-            </td>
-            <td>
-              <input type="text" data-ng-model="vm.new_product.country" placeholder="Country" />
-            </td>
-            <td>
-              <input type="text" data-ng-model="vm.new_product.image_url" placeholder="Image URL" />
-            </td>
-            <td data-ng-click="vm.create()">&plus;</td>
-          </tr>
-        </tbody>
-      </table>
-    </main>
-  </body>
-</html> -->
-***************************************************************************************************
-
-<div class="container">
-  <header class="jumbotron">
-    <h1>Categories!</h1>
-  </header>
-  <!-- <main ui-view> -->
-  <!-- <main data-ng-controller="CategoryController as vm"> -->
-    <!-- <p id="notice"><%= notice %></p> -->
-hellof{{}}
-    <table class="table table-striped">
-      <thead>
-
-
-
-show.html.erb
-
-
-<div class="container-fluid">
-  <main data-ng-controller="CategoryShowController as vm">
-    <div>{{vm}}</div>
-<h4><strong>{{vm.category.Cat_name}}</strong></h4>
-<!-- <form data-ng-submit="CommentIndexViewModel.create()">
-  <input placeholder="Add a New Recipe" data-ng-model="CommentIndexViewModel.comment.message" />
-  <button class="btn btn-info btn-sm" type="submit">Create</button>
-
-
-
-</form> -->
-<h1>Recipes</h1>
-<!-- <p id="notice"><%= notice %></p> -->
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <div></div>
-      <th>{{vm.recipes}}</th>
-      <th colspan="3"></th>
-      <tr data-ng-repeat="recipe in vm.recipes">
-        <td>{{$index + 1}}. <a data-ng-href="{{recipe.title}}" tabindex="1" class="large_blue">{{recipe.title}}</a></td>
-        <!-- <td> -->
-          <!-- <img data-ng-src="{{product.image_url}}" alt="#" /> -->
-          <!-- <a data-ng-href="{{Cat_name}}" tabindex="-1">{{category.Cat_name}}</a>
-        </td> -->
-    </tr>
-      </thead>
-    </table>
-  </main>
-</div>
+})(); // closes Main IFFEE

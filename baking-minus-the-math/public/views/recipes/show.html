@@ -30,15 +30,13 @@
         <span ng-show="ingredient.showEdit">
           <label for="vm.ingredient.amount">Amount</label>
           <input type="text" ng-model="ingredient.amount">
-          <label for="vm.ingredient.measurement">Measurement</label>
+          <label for="vm.ingredient.measurement">Measurment</label>
           <select ng-model="ingredient.measurement" class="dropdown">
-              <option ng-repeat="measurement in vm.measurements" value="{{measurement}}">{{measurement}}</option>
+              <option ng-repeat="measurement in vm.measurements" ng-selected="{{ measurement === ingredient.measurement ? 'true' : 'false' }}" value="{{measurement}}">{{measurement}}</option>
           </select>
-          <!-- <select><option ng-repeat="measurement in vm.measurements" type="text" ng-model="ingredient.measurement" value="{{measurement}}" placeholder="{{ingredient.measurement}}">{{measurement}}</option></select> -->
-          <!-- <input type="text" ng-model="ingredient.measurement" ng-selected = "{{vm.ingredient.measurement == measurement}}" > -->
           <label for="vm.ingredient.component">Ingredient</label>
           <input type="text" ng-model="ingredient.component">
-          <button class="btn editbtn" ng-click="vm.update(ingredient); ingredient.showEdit = !ingredient.showEdit ">Update {{ingredient.showEdit}}</button>
+          <button class="btn editbtn" ng-click="vm.update(ingredient); ingredient.showEdit = !ingredient.showEdit ">Update</button>
         </span>
       </td>
       </span>

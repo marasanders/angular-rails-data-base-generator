@@ -62,7 +62,7 @@
                       <input type="text" ng-model="ingredient.amount">
                       <label for="vm.ingredient.measurement">Measurment</label>
                       <select ng-model="vm.ingredient.measurement" class="dropdown">
-                          <option ng-repeat="measurement in vm.measurements" value="{{measurement}}">{{measurement}}</option>
+                          <option ng-repeat="measurement in vm.measurements" ng-selected="{{ measurement === ingredient.measurement ? 'true' : 'false' }}" value="{{measurement}}">{{measurement}}</option>
                       </select>
                       <label for="vm.ingredient.component">Ingredient</label>
                       <input type="text" ng-model="ingredient.component">
