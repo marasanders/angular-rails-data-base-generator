@@ -31,6 +31,7 @@
   .controller("CategoryIndexController", [
     "$resource",
     "CategoryFactory",
+    "$stateParams",
     "$http",
     "$state",
     CategoryIndexController
@@ -64,7 +65,6 @@
     "$state",
     RecipeEditControllerFunction
   ]);
-
     function RouterFunction($stateProvider, $locationProvider){
       // $locationProvider.html5Mode(true);
       $stateProvider
@@ -94,7 +94,7 @@
       })
   }
 //Index all the Categories
-  function CategoryIndexController($resource, CategoryFactory, $http, $state){
+  function CategoryIndexController($resource, CategoryFactory, $stateParams, $http, $state){
     var vm = this;
     vm.category_data = {}
 //Get categories from the database

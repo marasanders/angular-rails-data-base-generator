@@ -25,10 +25,25 @@
   font-weight: bold;
   color: blue;
 }
+.toplabel {
+  white-space: normal !important;
+  word-wrap: break-word;
+}
+#topcontent {
+  table-layout: fixed;
+}
+
+#bigger {
+  font-size: 18px;
+}
 
 #padit {
   border-left: 2px;
   border-right: 2px
+}
+textarea
+{
+  width:100%;
 }
 .editbtn {
   background: #e7ff0a;
@@ -123,6 +138,7 @@
 }
 
 .navButtons {
+    border-bottom: 20px;
     position: absolute;
     bottom: 0;
 }
