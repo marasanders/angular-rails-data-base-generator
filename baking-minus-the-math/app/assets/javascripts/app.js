@@ -241,76 +241,60 @@
 
     vm.new_ingredient = new IngredientFactory(); //{category_id: $stateParams.id});
      vm.create = function(){
-        vm.new_ingredient.$save({recipe_id: $stateParams.id}, function(response){
-        vm.ingredients = IngredientFactory.query({recipe_id: $stateParams.id})
-        if(response.success) vm.new_ingredient.push(response);
-           vm.new_ingredient = new IngredientFactory();
-         })
-     vm.ingredients.push(angular.copy(vm.new_ingredient))
-     vm.new_ingredient = {}
+       vm.new_ingredient.$save({recipe_id: $stateParams.id}, function(response){
+         vm.ingredients = IngredientFactory.query({recipe_id: $stateParams.id})
+         if(response.success) vm.new_ingredient.push(response);
+         vm.new_ingredient = new IngredientFactory();
+       })
+       vm.ingredients.push(angular.copy(vm.new_ingredient))
+       vm.new_ingredient = {}
     }
   }
+
   function IngredientFactoryFunction($resource) {
     return $resource("/recipes/:recipe_id/ingredients/:id.json", {}, {
       update: {method: "PUT"}
     })
   }
 
-
   function RecipeEditControllerFunction(CategoryFactory, RecipeFactory, IngredientFactory, MeasurementsFactory, $stateParams, $resource, $state){
-
       var vm = this;
-
       CategoryFactory.get({id: $stateParams.category_id}).$promise.then(function(category) {
         vm.category = category
       })
       RecipeFactory.get({category_id: $stateParams.category_id, id: $stateParams.id }).$promise.then(function(recipe) {
         vm.recipe = recipe
       })
-
       vm.ingredients = IngredientFactory.query({recipe_id: $stateParams.id})
       var Ingredient = $resource("/ingredients/:id.json", {}, {
           update: {method: "PUT"}
         });
-
       vm.measurements = MeasurementsFactory.query();
 
-
-
       vm.updateRecipe = function(recipe){
-
-        vm.recipe.$update({category_id: $stateParams.category_id, id: $stateParams.id}), function(response){
-        }
+        vm.recipe.$update({category_id: $stateParams.category_id, id: $stateParams.id}), function(response){}
       }
 
-        vm.new_ingredient = new IngredientFactory(); //{category_id: $stateParams.id});
-
-         vm.create = function(){
-
-            vm.new_ingredient.$save({recipe_id: $stateParams.id}, function(response){
-           vm.ingredients = IngredientFactory.query({recipe_id: $stateParams.id})
-
-            if(response.success) vm.new_ingredient.push(response);
-               vm.new_ingredient = new IngredientFactory();
-             })
-
+      vm.new_ingredient = new IngredientFactory()
+      vm.create = function(){
+        vm.new_ingredient.$save({recipe_id: $stateParams.id}, function(response){
+          vm.ingredients = IngredientFactory.query({recipe_id: $stateParams.id})
+          if(response.success) vm.new_ingredient.push(response);
+          vm.new_ingredient = new IngredientFactory();
+        })
          vm.ingredients.push(angular.copy(vm.new_ingredient))
          vm.new_ingredient = {}
-        }
+      }
 
-
-        vm.updateIngredient = function(ing){
-          Ingredient.update({id: ing.id}, ing, function(response){
-          });
-
-        }
+      vm.updateIngredient = function(ing){
+        Ingredient.update({id: ing.id}, ing, function(response){});
+      }
 
       vm.destroy = function(ing){
         Ingredient.remove({id: ing.id}, function(response){
           if(response.success) vm.ingredients.splice(vm.ingredients.indexOf(ing), 1);
         })
       }
-
  }
 
 
